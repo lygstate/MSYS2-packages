@@ -5,7 +5,7 @@
 ```bash
 pushd ./ports/msys2-runtime
 updpkgsums
-makepkg --cleanbuild --syncdeps --force --install --noconfirm
+makepkg --cleanbuild --syncdeps --force
 ```
 
 ## Building crosstool-ng
