@@ -12,11 +12,12 @@
 *.asc
 *.log
 *.log.[0-9]*
-*/src/
-*/pkg/
+/ports/*/src/
+/ports/*/pkg/
 *~
 *.swp
 *.swo
 /*/*-git/
 /*/*-svn/
 /*/*-hg/
+/.vscode/
