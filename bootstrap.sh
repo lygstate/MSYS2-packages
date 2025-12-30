@@ -24,3 +24,7 @@ mv libzstd-1.5.7-2-x86_64.pkg.tar.zst ../../dist/
 mv libzstd-devel-1.5.7-2-x86_64.pkg.tar.zst ../../dist/
 mv zstd-1.5.7-2-x86_64.pkg.tar.zst ../../dist/
 popd
+
+pushd ./ports/binutils
+makepkg --cleanbuild --syncdeps --force --noconfirm
+popd
