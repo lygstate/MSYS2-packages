@@ -1,0 +1,59 @@
+{
+  "cmake.configureOnOpen": false,
+  "files.autoGuessEncoding": true,
+  "C_Cpp.autoAddFileAssociations": false,
+  "C_Cpp.errorSquiggles": "disabled",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "sameLine",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
+  "C_Cpp.vcFormat.newLine.beforeElse": false,
+  "C_Cpp.vcFormat.newLine.beforeCatch": false,
+  "C_Cpp.vcFormat.space.pointerReferenceAlignment": "right",
+  "C_Cpp.vcFormat.indent.gotoLabels": "oneLeft",
+  "C_Cpp.formatting": "vcFormat",
+  "files.associations": {
+    "*.c.inc": "c"
+  },
+  "terminal.integrated.profiles.linux": {
+    "linux-build-x64": {
+      "path": "bash",
+      "overrideName": true,
+      "args": [
+        "--login",
+        "-c",
+        "mkdir -p $BUILDDIR && cd $BUILDDIR && exec bash"
+      ],
+      "env": {
+        "BUILDDIR": "build-linux-x64",
+      }
+    }
+  },
+  "terminal.integrated.profiles.windows": {
+    "PowerShell -NoProfile": {
+      "overrideName": true,
+      "source": "PowerShell",
+      "args": [
+        "-NoProfile"
+      ]
+    },
+    "cmder": {
+      "path": "${env:windir}\\System32\\cmd.exe",
+      "overrideName": true,
+      "args": []
+    },
+    "MSYS2-CYGWIN": {
+      "path": "C:/CI-Tools/msys64/usr/bin/bash.exe",
+      "overrideName": true,
+      "args": [
+        "--login",
+        "-i"
+      ],
+      "env": {
+        "MSYS": "winsymlinks:nativestrict",
+        "MSYSTEM": "CYGWIN",
+        "CHERE_INVOKING": "1"
+      }
+    },
+  },
+  "terminal.integrated.defaultProfile.windows": "cmder",
+  "git.ignoreLimitWarning": true
+}
