@@ -3,7 +3,7 @@
 pkgbase=zstd
 pkgname=('zstd' 'libzstd' 'libzstd-devel')
 pkgver=1.5.7
-pkgrel=1
+pkgrel=2
 pkgdesc="Zstandard - Fast real-time compression algorithm"
 arch=('i686' 'x86_64')
 url='https://facebook.github.io/zstd/'
@@ -14,10 +14,8 @@ msys2_references=(
 )
 license=('BSD')
 makedepends=('gcc' 'ninja' 'cmake')
-source=("https://github.com/facebook/${pkgbase}/releases/download/v${pkgver}/${pkgbase}-${pkgver}.tar.gz"{,.sig})
-sha256sums=('eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3'
-            'SKIP')
-validpgpkeys=('4EF4AC63455FC9F4545D9B7DEF8FE99528B52FFD')
+source=("https://github.com/facebook/${pkgbase}/releases/download/v${pkgver}/${pkgbase}-${pkgver}.tar.gz")
+sha256sums=('eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3')
 noextract=("${pkgbase}-${pkgver}.tar.gz")
 
 prepare() {
