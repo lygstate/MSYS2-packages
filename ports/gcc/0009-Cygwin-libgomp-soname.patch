@@ -1,7 +1,7 @@
-From 13271bde90bde6c07df8d91116dbae678197b342 Mon Sep 17 00:00:00 2001
+From 13d3195ca9459778f96f54bef5ed88634f3ac6c1 Mon Sep 17 00:00:00 2001
 From: Jonathan Yong <10walls@gmail.com>
 Date: Tue, 8 Sep 2020 15:05:44 +0200
-Subject: [PATCH 09/12] Cygwin: libgomp soname
+Subject: [PATCH 09/20] Cygwin: libgomp soname
 
 ---
  libgomp/config/cygwin/plugin-suffix.h | 2 ++
@@ -80,5 +80,5 @@ index 9674ff4c9c0..e07a55c1229 100644
    const char *cur, *next;
    char *plugin_name;
 -- 
-2.45.1
+2.52.0.windows.1
 

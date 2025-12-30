@@ -1,7 +1,7 @@
-From 2c546a53be9c5890be33aa799ea4f67d193b4ac3 Mon Sep 17 00:00:00 2001
+From 3f1df686400422aff2031d34d4a206e8bf6d9d14 Mon Sep 17 00:00:00 2001
 From: Kai Tietz <ktietz@anaconda.com>
 Date: Wed, 21 Apr 2021 07:54:59 +0200
-Subject: [PATCH 02/12] add -m(no-)align-vector-insn option for i386
+Subject: [PATCH 02/20] add -m(no-)align-vector-insn option for i386
 
 ---
  gcc/config/i386/i386-options.cc |  9 +++++--
@@ -65,10 +65,10 @@ index 27d34bd64ea..639aa84b1e5 100644
  Target RejectNegative Joined UInteger Var(ix86_preferred_stack_boundary_arg)
  Attempt to keep stack aligned to this power of 2.
 diff --git a/gcc/config/i386/predicates.md b/gcc/config/i386/predicates.md
-index 3d3848c0a22..7b08cc48675 100644
+index ee0e81554d6..99bd7a65597 100644
 --- a/gcc/config/i386/predicates.md
 +++ b/gcc/config/i386/predicates.md
-@@ -1715,7 +1715,7 @@
+@@ -1719,7 +1719,7 @@
  ;; less than its natural alignment.
  (define_predicate "misaligned_operand"
    (and (match_code "mem")
@@ -78,7 +78,7 @@ index 3d3848c0a22..7b08cc48675 100644
  ;; Return true if OP is a parallel for an mov{d,q,dqa,ps,pd} vec_select,
  ;; where one of the two operands of the vec_concat is const0_operand.
 diff --git a/gcc/config/i386/sse.md b/gcc/config/i386/sse.md
-index b280676eee6..98adb8ad90f 100644
+index 606c2533842..f7548b96a19 100644
 --- a/gcc/config/i386/sse.md
 +++ b/gcc/config/i386/sse.md
 @@ -1952,7 +1952,8 @@
@@ -187,5 +187,5 @@ index 10bcd293527..a08de5a8a93 100644
  #ifdef TARGET_USING_MCFGTHREAD
  #define DEFINE_THREAD_MODEL  builtin_define ("__USING_MCFGTHREAD__");
 -- 
-2.45.1
+2.52.0.windows.1
 

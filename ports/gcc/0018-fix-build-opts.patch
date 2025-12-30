@@ -1,7 +1,7 @@
-From f26079a3ea4b4ddf4e1c500e82cd5511ca770984 Mon Sep 17 00:00:00 2001
+From d82bbced07aa0bd468e62099d65309380b667fbd Mon Sep 17 00:00:00 2001
 From: Achim Gratz <Achim.Gratz@Stromeko.DE>
 Date: Mon, 10 Feb 2025 18:45:54 +0100
-Subject: [PATCH 404/404] fix build: opts
+Subject: [PATCH 18/20] fix build: opts
 
 ---
  gcc/opts.cc | 3 +++
@@ -24,5 +24,5 @@ index ffcbdfef0bd..705899b0434 100644
  	  help = new_help;
  	}
 -- 
-2.45.1
+2.52.0.windows.1
 

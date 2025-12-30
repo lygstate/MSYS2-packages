@@ -1,10 +1,8 @@
-From 752199136e42da0b9001907a617053d4313882f5 Mon Sep 17 00:00:00 2001
+From 4c482521599addd41fa02d20793a6a9a20640cdd Mon Sep 17 00:00:00 2001
 From: Jonathan Yong <10walls@gmail.com>
 Date: Tue, 8 Sep 2020 14:50:33 +0200
-Subject: [PATCH 03/12] Cygwin: use SysV ABI on x86_64
+Subject: [PATCH 03/20] Cygwin: use SysV ABI on x86_64
 
-# Conflicts:
-#	libitm/libitm.h
 ---
  gcc/builtin-attrs.def | 3 +++
  gcc/gtm-builtins.def  | 2 +-
@@ -88,5 +86,5 @@ index cdb3e9747db..ace19ea1469 100644
  extern "C" void GTM_LB (const void *, size_t) ITM_REGPARM;
  
 -- 
-2.45.1
+2.52.0.windows.1
 

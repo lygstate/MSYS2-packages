@@ -1,7 +1,7 @@
-From 70c2be2299e6a498e69ebad64730df73e754c59f Mon Sep 17 00:00:00 2001
+From dd12c4e95c6ea7d3576b42e9d8d52452e866fdd0 Mon Sep 17 00:00:00 2001
 From: Jonathan Yong <10walls@gmail.com>
 Date: Tue, 8 Sep 2020 15:24:34 +0200
-Subject: [PATCH 11/12] Cygwin: newlib ftm
+Subject: [PATCH 11/20] Cygwin: newlib ftm
 
 ---
  gcc/glimits.h | 2 +-
@@ -21,5 +21,5 @@ index d5877602bf7..f6a8d85048d 100644
  # undef LONG_LONG_MIN
  # define LONG_LONG_MIN (-LONG_LONG_MAX - 1LL)
 -- 
-2.45.1
+2.52.0.windows.1
 

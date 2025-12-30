@@ -1,7 +1,8 @@
-From 55985e687b774bdc0e96465f1f605043876c28c8 Mon Sep 17 00:00:00 2001
+From d8ef02f1332e89224d99f1c96465f660c903b55f Mon Sep 17 00:00:00 2001
 From: Takashi Yano <takashi.yano@nifty.ne.jp>
 Date: Fri, 24 Nov 2023 00:34:48 +0900
-Subject: [PATCH] libstdc++: Implement most of locale features for newlib.
+Subject: [PATCH 15/20] libstdc++: Implement most of locale features for
+ newlib.
 
 Previously, locale implementation for newlib supports only "C" locale.
 With this patch, the locale implementation for newlib has been much
@@ -3727,5 +3728,5 @@ index cab4f845681..f727ce25ba9 100644
  
      // Reference count sanity check: one reference removed for the
 -- 
-2.45.1
+2.52.0.windows.1
 

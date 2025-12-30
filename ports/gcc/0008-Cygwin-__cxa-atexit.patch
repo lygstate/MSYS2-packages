@@ -1,7 +1,7 @@
-From 6207948a02e9a116a7c64866235473e89be2edb5 Mon Sep 17 00:00:00 2001
+From 73be43a51ba72428c9d33a485257573f596103e0 Mon Sep 17 00:00:00 2001
 From: Jonathan Yong <10walls@gmail.com>
 Date: Thu, 30 Oct 2014 17:15:02 +0800
-Subject: [PATCH 08/12] Cygwin: __cxa-atexit
+Subject: [PATCH 08/20] Cygwin: __cxa-atexit
 
 ---
  gcc/config.gcc                        | 1 +
@@ -9,7 +9,7 @@ Subject: [PATCH 08/12] Cygwin: __cxa-atexit
  2 files changed, 8 insertions(+)
 
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 5725704e06b..96a8bc2a882 100644
+index 087aaa7be37..f49955a72e3 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
 @@ -2843,6 +2843,7 @@ mipstx39-*-elf* | mipstx39el-*-elf*)
@@ -47,5 +47,5 @@ index f742a3be2cd..ec4616fbc78 100644
  }
  
 -- 
-2.45.1
+2.52.0.windows.1
 

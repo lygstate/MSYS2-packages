@@ -1,7 +1,7 @@
-From 748d4e91cce2f58ca76a223ab5108395fcdf784e Mon Sep 17 00:00:00 2001
+From c09195ab239a08ee91c419f6e2a78783fad6b7e3 Mon Sep 17 00:00:00 2001
 From: Achim Gratz <Achim.Gratz@Stromeko.DE>
 Date: Sun, 20 Oct 2024 16:52:06 +0200
-Subject: [PATCH 401/404] fix build: stage1 now depends on libintl / libiconv
+Subject: [PATCH 16/20] fix build: stage1 now depends on libintl / libiconv
 
 ---
  gcc/Makefile.in | 3 ++-
@@ -22,5 +22,5 @@ index 55b4cd7dbed..4f71b7f6d93 100644
  omp-general.o: omp-device-properties.h
  
 -- 
-2.45.1
+2.52.0.windows.1
 

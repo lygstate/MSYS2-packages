@@ -1,7 +1,7 @@
-From 6b065d6ba088c81945f50e711384d5bb1faa36e9 Mon Sep 17 00:00:00 2001
+From 2680b67b20c8c93a9906cbae2359922f6ecb9464 Mon Sep 17 00:00:00 2001
 From: Achim Gratz <Achim.Gratz@Stromeko.DE>
 Date: Sun, 25 Apr 2021 11:33:55 +0200
-Subject: [PATCH 101/102] Cygwin: enable libgccjit not just for MingW
+Subject: [PATCH 13/20] Cygwin: enable libgccjit not just for MingW
 
 ---
  configure            | 17 +++++++++++++++--
@@ -163,5 +163,5 @@ index 59afe264a85..52c24c35741 100644
  # Install import library
  	$(INSTALL_PROGRAM) $(LIBGCCJIT_IMPORT_LIB) \
 -- 
-2.45.1
+2.52.0.windows.1
 

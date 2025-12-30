@@ -1,7 +1,7 @@
-From 2f0a91e8fa610e355ef947c6b284dbe62664ffb5 Mon Sep 17 00:00:00 2001
+From d364685b39fd15c39e6d53e5b305af64a04ba968 Mon Sep 17 00:00:00 2001
 From: Achim Gratz <Achim.Gratz@Stromeko.DE>
 Date: Mon, 10 Feb 2025 18:39:22 +0100
-Subject: [PATCH 403/404] fix build: pretty-print
+Subject: [PATCH 17/20] fix build: pretty-print
 
 ---
  gcc/config/i386/host-cygwin.cc | 2 ++
@@ -54,5 +54,5 @@ index abd6c0b528f..ba40a1f157d 100644
    /* Verify that instances were cleaned up.  */
    ASSERT_EQ (e1.m_num_living_values, 0);
 -- 
-2.45.1
+2.52.0.windows.1
 
