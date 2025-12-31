@@ -4,6 +4,7 @@ mkdir -p dist
 pacman -Syu base-devel --noconfirm
 pacman -U ../../dist-init/msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst --noconfirm
 pacman -U ../../dist-init/msys2-runtime-devel-3.6.5-1-x86_64.pkg.tar.zst --noconfirm
+pacman -U --overwrite \* ../../dist-init/gcc-libs-15.2.0-1-x86_64.pkg.tar.zst --noconfirm
 # Building/install binutils and gcc first
 pushd ./ports/binutils
 gpg --recv-keys 738409F520DF9190
@@ -14,6 +15,11 @@ popd
 pushd ./ports/gcc
 updpkgsums
 makepkg --cleanbuild --syncdeps --force --noconfirm
+mv gcc-libs-15.2.0-2-x86_64.pkg.tar.zst ../../dist/gcc-libs-15.2.0-2-x86_64-stage0.pkg.tar.zst
+mv gcc-15.2.0-2-x86_64.pkg.tar.zst ../../dist/gcc-15.2.0-2-x86_64-stage0.pkg.tar.zst
+pacman -U  ../../dist/binutils-2.45.1-1-x86_64-stage0.pkg.tar.zst --noconfirm
+pacman -U  ../../dist/gcc-libs-15.2.0-2-x86_64-stage0.pkg.tar.zst --noconfirm
+pacman -U  ../../dist/gcc-15.2.0-2-x86_64-stage0.pkg.tar.zst --noconfirm
 popd
 
 pushd ./ports/msys2-runtime
