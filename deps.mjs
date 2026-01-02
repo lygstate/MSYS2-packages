@@ -17,34 +17,27 @@ process.on("SIGINT", function () {
 async function main() {
   const portsDir = path.join(__dirname, "ports");
   const packages_list = await fs.readdir(portsDir);
+  let script = "";
   for (let pkg_name of packages_list) {
     const fullUrl = path.join(portsDir, pkg_name, "PKGBUILD");
     if (!fsSync.existsSync(fullUrl)) {
       console.log(`Invalid ${fullUrl}`);
     }
-    const pkg_info = await spawnProcessAsyncCapture(
-      `C:/CI-Tools/msys64/usr/bin/bash.exe`,
-      [
-        "--login",
-        "-c",
-        `source ./ports/${pkg_name}/PKGBUILD; echo "{\\\"pkgname\\\": \\\"\${pkgname[*]}\\\", \\\"pkgbase\\\": \\\"\${pkgbase}\\\"}"`,
-      ],
-      {
-        env: {
-          CHERE_INVOKING: 1,
-        },
-      }
-    );
-    let pkg_info_json = JSON.parse(pkg_info.stdout);
-    pkg_info_json.pkgname = pkg_info_json.pkgname.split(" ");
-    if (pkg_info_json.pkgbase === "") {
-      pkg_info_json.pkgbase = pkg_info_json.pkgname[0];
-    }
-    console.log(JSON.stringify(pkg_info_json, null, 2));
-    if (pkg_info_json.pkgbase !== pkg_name) {
-        console.log(`Invalid pkgbase ${fullUrl}`);
-    }
+    script += `source ./ports/${pkg_name}/PKGBUILD; echo "{\\\"pkgrel\\\": \\\"\${pkgrel}\\\", \\\"pkgver\\\": \\\"\${pkgver}\\\", \\\"dir\\\": \\\"${pkg_name}\\\", \\\"pkgname\\\": \\\"\${pkgname[*]}\\\", \\\"pkgbase\\\": \\\"\${pkgbase}\\\"}"\n`;
   }
+  await fs.writeFile("pkg_info.sh", script);
+  const pkg_info = await spawnProcessAsyncCapture(
+    `C:/CI-Tools/msys64/usr/bin/bash.exe`,
+    ["--login", "-c", "source pkg_info.sh"],
+    {
+      env: {
+        CHERE_INVOKING: 1,
+      },
+    }
+  );
+  await fs.writeFile("pkg_info.txt", pkg_info.stdout);
+  console.log(pkg_info.stdout)
+
   console.log(`All path checked`);
 
   const msys_packages = path.join(__dirname, "msys.txt");
@@ -64,7 +57,7 @@ async function main() {
     console.log(`Deps for ${pkg_name} is :[\n${deps.stdout}\n]`);
     deps_map[pkg_name] = deps.stdout.trim().split("\n");
   }
-  fs.writeFile("deps.json", JSON.stringify(deps_map, null, 2));
+  await fs.writeFile("deps.json", JSON.stringify(deps_map, null, 2));
 }
 
 main();
