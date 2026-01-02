@@ -1,5 +1,6 @@
 # Maintainer: Alexey Pavlov <Alexpux@gmail.com>
 
+pkgbase=zlib
 pkgname=('zlib' 'zlib-devel')
 pkgver=1.3.1
 pkgrel=1
@@ -26,7 +27,7 @@ sha256sums=('38ef96b8dfe510d42707d9c781877914792541133e1870841463bfa73f883e32'
 validpgpkeys=('5ED46A6721D365587791E2AA783FCD8E58BCAFBA')
 
 prepare() {
-  cd ${srcdir}/${pkgname}-${pkgver}
+  cd ${srcdir}/${pkgbase}-${pkgver}
 
   patch -p2 -i ${srcdir}/zlib-1.2.13-configure.patch
   patch -p2 -i ${srcdir}/zlib-1.2.13-gzopen_w.patch
@@ -34,7 +35,7 @@ prepare() {
 }
 
 build() {
-  cd ${srcdir}/${pkgname}-${pkgver}
+  cd ${srcdir}/${pkgbase}-${pkgver}
 
   # configure doesn't really work.. but leave it here in case things improve
   export MSYSTEM=CYGWIN
@@ -58,7 +59,7 @@ build() {
 }
 
 check() {
-  cd ${srcdir}/${pkgname}-${pkgver}
+  cd ${srcdir}/${pkgbase}-${pkgver}
   make test
 }
 
@@ -68,7 +69,7 @@ package_zlib() {
   mkdir -p ${pkgdir}/usr
   cp -rf $srcdir/dest/usr/bin ${pkgdir}/usr/
   cp -rf $srcdir/dest/usr/share ${pkgdir}/usr/
-  install -D -m644 ${srcdir}/${pkgname}-${pkgver}/LICENSE ${pkgdir}/usr/share/licenses/zlib/LICENSE
+  install -D -m644 ${srcdir}/${pkgbase}-${pkgver}/LICENSE ${pkgdir}/usr/share/licenses/zlib/LICENSE
 }
 
 package_zlib-devel() {
