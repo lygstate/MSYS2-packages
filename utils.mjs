@@ -1,7 +1,6 @@
 import { spawn } from "child_process";
 
 export const black_list = new Set([
-  "busybox",
   "ca-certificates",
   "ctags", // ctags: /usr/bin/etags.exe exists in filesystem (owned by emacs)
   "cmake-bootstrap", // cmake-emacs-4.2.1-1 and cmake-bootstrap-4.2.1-1 are in conflict.
@@ -14,7 +13,7 @@ export const black_list = new Set([
   "msys2-runtime-3.4-devel",
   "msys2-runtime-3.5",
   "msys2-runtime-3.5-devel",
-  "parallel", // parallel: /usr/bin/parallel exists in filesystem
+  "parallel", // parallel: /usr/bin/parallel exists in filesystem /usr/bin/parallel.exe is owned by moreutils 0.70-1
   "gnu-netcat", // gnu-netcat-0.7.1-3 and openbsd-netcat-1.234_1-1 are in conflict. Remove openbsd-netcat? [Y/n] "
 ]);
 
