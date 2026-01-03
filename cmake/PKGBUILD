@@ -4,7 +4,7 @@
 _realname=cmake
 pkgname=("${_realname}" "${_realname}-emacs" "${_realname}-vim")
 pkgver=4.2.2
-pkgrel=1
+pkgrel=2
 pkgdesc="A cross-platform open-source make system"
 arch=('i686' 'x86_64')
 url="https://www.cmake.org/"
@@ -42,8 +42,28 @@ depends=('gcc-libs'
          'zlib'
          'cppdap')
 options=('staticlibs' 'strip')
-source=(https://www.cmake.org/files/v${pkgver%.*}/${pkgname}-${pkgver}.tar.gz)
-sha256sums=('bbda94dd31636e89eb1cc18f8355f6b01d9193d7676549fba282057e8b730f58')
+source=(https://www.cmake.org/files/v${pkgver%.*}/${pkgname}-${pkgver}.tar.gz
+  0001-Prepare-to-merge-msys-into-cygwin.patch
+)
+sha256sums=('bbda94dd31636e89eb1cc18f8355f6b01d9193d7676549fba282057e8b730f58'
+            '4b8b3b23bebc0579b34e0151fbda7285de2aa1adaaee114d9367751e95aac054')
+
+# Helper macros to help make tasks easier #
+apply_patch_with_msg() {
+  for _fname in "$@"
+  do
+    msg2 "Applying ${_fname}"
+    patch -Nbp1 -i "${srcdir}"/${_fname}
+  done
+}
+
+prepare() {
+  cd ${srcdir}/${_realname}-${pkgver}
+
+  # patches
+  apply_patch_with_msg \
+    0001-Prepare-to-merge-msys-into-cygwin.patch
+}
 
 build() {
   [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
