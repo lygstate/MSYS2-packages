@@ -42,8 +42,29 @@ depends=('gcc-libs'
          'zlib'
          'cppdap')
 options=('staticlibs' 'strip')
-source=(https://www.cmake.org/files/v${pkgver%.*}/${pkgname}-${pkgver}.tar.gz)
-sha256sums=('0798f4be7a1a406a419ac32db90c2956936fecbf50db3057d7af47d69a2d7edb')
+source=(
+  https://www.cmake.org/files/v${pkgver%.*}/${pkgname}-${pkgver}.tar.gz
+  0001-Prepare-to-merge-msys-into-cygwin.patch
+)
+sha256sums=('0798f4be7a1a406a419ac32db90c2956936fecbf50db3057d7af47d69a2d7edb'
+            '4b8b3b23bebc0579b34e0151fbda7285de2aa1adaaee114d9367751e95aac054')
+
+# Helper macros to help make tasks easier #
+apply_patch_with_msg() {
+  for _fname in "$@"
+  do
+    msg2 "Applying ${_fname}"
+    patch -Nbp1 -i "${srcdir}"/${_fname}
+  done
+}
+
+prepare() {
+  cd ${srcdir}/${_realname}-${pkgver}
+
+  # patches
+  apply_patch_with_msg \
+    0001-Prepare-to-merge-msys-into-cygwin.patch
+}
 
 build() {
   [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
