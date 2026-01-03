@@ -27,7 +27,8 @@ async function main() {
     script += `pkgver=\n`;
     script += `pkgname=()\n`;
     script += `pkgbase=\n`;
-    script += `source ./ports/${pkg_name}/PKGBUILD; echo "{\\\"pkgrel\\\": \\\"\${pkgrel}\\\", \\\"pkgver\\\": \\\"\${pkgver}\\\", \\\"dir\\\": \\\"${pkg_name}\\\", \\\"pkgname\\\": \\\"\${pkgname[*]}\\\", \\\"pkgbase\\\": \\\"\${pkgbase}\\\"}"\n`;
+    script += `makedepends=()\n`;
+    script += `source ./ports/${pkg_name}/PKGBUILD; echo "{\\\"makedepends\\\": \\\"\${makedepends[*]}\\\", \\\"pkgrel\\\": \\\"\${pkgrel}\\\", \\\"pkgver\\\": \\\"\${pkgver}\\\", \\\"dir\\\": \\\"${pkg_name}\\\", \\\"pkgname\\\": \\\"\${pkgname[*]}\\\", \\\"pkgbase\\\": \\\"\${pkgbase}\\\"}"\n`;
   }
   await fs.writeFile("pkg_info.sh", script);
   const pkg_info = await spawnProcessAsyncCapture(
