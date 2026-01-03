@@ -97,40 +97,40 @@ for package in "${packages[@]}"; do
     echo "::endgroup::"
 
     cd "$package"
-    for pkg in *.pkg.tar.*; do
-        pkgname="$(echo "$pkg" | rev | cut -d- -f4- | rev)"
-        echo "::group::[install] ${pkgname}"
-        grep -qFx "${package}" "$DIR/ci-dont-install-list.txt" || pacman --noprogressbar --upgrade --noconfirm $pkg
+    source ./PKGBUILD
+    for pkg in "${pkgname[@]}"; do
+        echo "::group::[install] ${pkg}"
+        grep -qFx "${package}" "$DIR/ci-dont-install-list.txt" || pacman --noprogressbar --upgrade --noconfirm $pkg-$pkgver-$pkgrel-*.pkg.tar.zst
         echo "::endgroup::"
 
-        echo "::group::[meta-diff] ${pkgname}"
-        message "Package info diff for ${pkgname}"
-        diff -Nur <(pacman -Si ${MSYSTEM,,}/"${pkgname}") <(pacman -Qip "${pkg}") || true
+        echo "::group::[meta-diff] ${pkg}"
+        message "Package info diff for ${pkg}"
+        diff -Nur <(pacman -Si ${MSYSTEM,,}/"${pkg}") <(pacman -Qip "${pkg}") || true
         echo "::endgroup::"
 
-        echo "::group::[file-diff] ${pkgname}"
-        message "File listing diff for ${pkgname}"
-        diff -Nur <(pacman -Fl ${MSYSTEM,,}/"$pkgname" | sed -e 's|^[^ ]* |/|' | sort) <(pacman -Ql "$pkgname" | sed -e 's|^[^/]*||' | sort) || true
+        echo "::group::[file-diff] ${pkg}"
+        message "File listing diff for ${pkg}"
+        diff -Nur <(pacman -Fl ${MSYSTEM,,}/"$pkg" | sed -e 's|^[^ ]* |/|' | sort) <(pacman -Ql "$pkg" | sed -e 's|^[^/]*||' | sort) || true
         echo "::endgroup::"
 
-        echo "::group::[dll check] ${pkgname}"
-        declare -a binaries=($(pacman -Qlq $pkgname | grep -E ${MINGW_PREFIX}/.+\.\(dll\|exe\|pyd\)$))
+        echo "::group::[dll check] ${pkg}"
+        declare -a binaries=($(pacman -Qlq $pkg | grep -E ${MINGW_PREFIX}/.+\.\(dll\|exe\|pyd\)$))
         if [ "${#binaries[@]}" -ne 0 ]; then
-            message "Runtime dependencies for ${pkgname}"
+            message "Runtime dependencies for ${pkg}"
             for binary in ${binaries[@]}; do
                 echo "${binary}:"
                 ldd ${binary} | GREP_COLOR="1;35" grep --color=always "msys-.*\|" \
                     || echo "        None"
             done
-            message "DLL bases for ${pkgname}"
+            message "DLL bases for ${pkg}"
             rebase -i "${binaries[@]}" | GREP_COLOR="1;35" grep --color=always "msys-.*\|" \
                 || echo "        None"
         fi
         echo "::endgroup::"
 
-        echo "::group::[uninstall] ${pkgname}"
-        message "Uninstalling $pkgname"
-        grep -qFx "${package}" "$DIR/ci-dont-install-list.txt" || pacman -R --recursive --unneeded --noconfirm --noprogressbar "$pkgname"
+        echo "::group::[uninstall] ${pkg}"
+        message "Uninstalling $pkg"
+        grep -qFx "${package}" "$DIR/ci-dont-install-list.txt" || pacman -R --recursive --unneeded --noconfirm --noprogressbar "$pkg"
         echo "::endgroup::"
     done
     cd - > /dev/null
