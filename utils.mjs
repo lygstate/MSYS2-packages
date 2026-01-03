@@ -1,8 +1,7 @@
 import { spawn } from "child_process";
 
 export const black_list = new Set([
-  "ca-certificates",
-  "ctags", // ctags: /usr/bin/etags.exe exists in filesystem (owned by emacs)
+  // "ca-certificates",
   "cmake-bootstrap", // cmake-emacs-4.2.1-1 and cmake-bootstrap-4.2.1-1 are in conflict.
   "mingw-w64-cross-clang", // mingw-w64-cross-clang: /opt/i686-w64-mingw32/bin/ar exists in filesystem
   "mingw-w64-cross-clang-crt",

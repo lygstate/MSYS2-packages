@@ -23,6 +23,10 @@ async function main() {
     if (!fsSync.existsSync(fullUrl)) {
       console.log(`Invalid ${fullUrl}`);
     }
+    script += `pkgrel=\n`;
+    script += `pkgver=\n`;
+    script += `pkgname=()\n`;
+    script += `pkgbase=\n`;
     script += `source ./ports/${pkg_name}/PKGBUILD; echo "{\\\"pkgrel\\\": \\\"\${pkgrel}\\\", \\\"pkgver\\\": \\\"\${pkgver}\\\", \\\"dir\\\": \\\"${pkg_name}\\\", \\\"pkgname\\\": \\\"\${pkgname[*]}\\\", \\\"pkgbase\\\": \\\"\${pkgbase}\\\"}"\n`;
   }
   await fs.writeFile("pkg_info.sh", script);
@@ -35,10 +39,8 @@ async function main() {
       },
     }
   );
-  await fs.writeFile("pkg_info.txt", pkg_info.stdout);
-  console.log(pkg_info.stdout)
-
   console.log(`All path checked`);
+  console.log(pkg_info.stdout);
 
   const msys_packages = path.join(__dirname, "msys.txt");
   const packages = await fs.readFile(msys_packages, "utf-8");
@@ -57,7 +59,19 @@ async function main() {
     console.log(`Deps for ${pkg_name} is :[\n${deps.stdout}\n]`);
     deps_map[pkg_name] = deps.stdout.trim().split("\n");
   }
-  await fs.writeFile("deps.json", JSON.stringify(deps_map, null, 2));
+  await fs.writeFile(
+    "deps.json",
+    JSON.stringify(
+      {
+        pkg_info: JSON.parse(
+          "[" + pkg_info.stdout.trim().split("\n").join(",") + "]"
+        ),
+        deps_map: deps_map,
+      },
+      null,
+      2
+    )
+  );
 }
 
 main();
