@@ -24,7 +24,7 @@ optdepends=('bash-completion: for svn bash completion'
 provides=('svn')
 options=('!libtool' '!emptydirs')
 noextract=("subversion-${pkgver}.tar.bz2")
-source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2{,.asc}
+source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2
         svnclean
         01-make-build-directories.patch
         02-fix-linking.patch
@@ -48,7 +48,6 @@ source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2{
         remove-checking-symlink.patch
         90-use-copy-instead-symlink.patch)
 sha256sums=('e78a29e7766b8b7b354497d08f71a55641abc53675ce1875584781aae35644a1'
-            'SKIP'
             'b09dd041aba0078c8d50df130ef2f96c3ef8486279a620532fef4fe48ef9961e'
             '66d8028dbee086502e453d7435aa15f7e141dbc8808e650e883e1d90a0a022b1'
             '6dc4dda8291087abb94ac0e256833b2ecae452a597fc9222e7443ea0e5694ff7'
@@ -71,8 +70,6 @@ sha256sums=('e78a29e7766b8b7b354497d08f71a55641abc53675ce1875584781aae35644a1'
             '9d718bc1a8eb51b6b95513830574d4bf57875db720f03c7c376a977beebae82c'
             'd821304ee957ef4adbb0a8dec9cea3fe62ad7163aef132317d28f70ea25162ca'
             'fc545e375d8af4ef6d8afad453453480664b6a2ff74915f94b8a7da7de14155b')
-# https://subversion.apache.org/download.cgi#recommended-release
-validpgpkeys=('7DC8A7BF37478FF48E33E85E2B4822B4B6340BAC')
 
 apply_patch_with_msg() {
   for _fname in "$@"
