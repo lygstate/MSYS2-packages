@@ -14,7 +14,7 @@ msys2_references=(
 license=('custom')
 depends=('tcl')
 makedepends=('autotools' 'gcc' 'tcl-devel')
-source=(https://downloads.sourceforge.net/project/expect/Expect/${pkgver}/expect${pkgver}.tar.gz
+source=(https://sourceforge.net/projects/expect/files/Expect/${pkgver}/expect${pkgver}.tar.gz
         5.45-openpty.patch)
 sha256sums=('49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34'
             '51767a9781b8844280265b290ac894fda176b7b92dad9b868f07b4e83b478207')
