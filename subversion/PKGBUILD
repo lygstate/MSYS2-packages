@@ -25,7 +25,7 @@ optdepends=('bash-completion: for svn bash completion'
 provides=('svn')
 options=('!libtool' '!emptydirs')
 noextract=("subversion-${pkgver}.tar.bz2")
-source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2{,.asc}
+source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2
         svnclean
         0001-Create-directories-in-build-tree.patch
         0002-Fix-linking-for-Cygwin.patch
@@ -52,7 +52,6 @@ source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2{
         0023-Allow-ra-tests-to-spawn-svnserve.exe-successfully.patch
         0024-XFAIL-tests-that-fail-due-to-Cygwin-MSYS2-platform-l.patch)
 sha256sums=('e78a29e7766b8b7b354497d08f71a55641abc53675ce1875584781aae35644a1'
-            'SKIP'
             'b09dd041aba0078c8d50df130ef2f96c3ef8486279a620532fef4fe48ef9961e'
             '76d20bc2614279a1e5a1335f0f2c9ca68a9fe48614843451659ef70fc133f059'
             'cf25ba474942493328b2bbd46a902a6aa4e2737d85653a90451bd59bdca72ced'
@@ -78,8 +77,6 @@ sha256sums=('e78a29e7766b8b7b354497d08f71a55641abc53675ce1875584781aae35644a1'
             'dca0bd19fb6c957a6d9104a1cbc9ccdef65ea400c05be92b680e5f1bdda8737a'
             '1dca7ce5d73127554154da24d796d5f01d641f665a95586acd6ad381ab184b41'
             'efa21bcf159541bce33183f196cf3d21d8ae158241901e94d7acdcc09841dfca')
-# https://subversion.apache.org/download.cgi#recommended-release
-validpgpkeys=('7DC8A7BF37478FF48E33E85E2B4822B4B6340BAC')
 
 apply_patch_with_msg() {
   for _fname in "$@"
