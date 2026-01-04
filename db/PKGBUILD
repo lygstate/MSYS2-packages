@@ -26,6 +26,7 @@ prepare() {
 build() {
   cd "${srcdir}"/$pkgname-${pkgver}/build_unix
 
+  CFLAGS=-Wno-incompatible-pointer-types \
   ../dist/configure \
     --prefix=/usr \
     --build=${CHOST} \
