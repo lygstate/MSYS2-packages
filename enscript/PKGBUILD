@@ -20,7 +20,7 @@ source=(
         "300ecf85a8fe166a39f9dd818945c7b8a970db39.patch"::"https://git.savannah.gnu.org/cgit/enscript.git/patch/?id=300ecf85a8fe166a39f9dd818945c7b8a970db39"
         "enscript-EXEEXT.patch")
 sha256sums=('6d56bada6934d055b34b6c90399aa85975e66457ac5bf513427ae7fc77f5c0bb'
-            '53705eb99a11fbc4277140534331813fff526e5380f5d5a2046484ae92900186'
+            '4b00a24c82bd5b806da8c33ba0e89cf6eca16fc7c65858d9e8c5a8053cc2ba71'
             'adba69a58e184c63fe3ac6dc7487967ce019af4bfb0313325a8a8765eee09b1a')
 #public key 38734D7787901452 has been revoked
 #validpgpkeys=('0862E74AAD81B2F26170064438734D7787901452')
