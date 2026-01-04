@@ -22,7 +22,7 @@ source=("https://github.com/uutils/coreutils/archive/${pkgver}/${_realname}-${pk
 sha256sums=('83535e10c3273c31baa2f553dfa0ceb4148914e9c1a9c5b00d19fbda5b2d4d7d'
             'aebec7d9c51d26d003333bc53158ac75b8e960ca5cb75d24fe8a5cb027c59842'
             '3b2a744cba48a350eed165c84971c83fb1becab74c5764c5a90894ade6ffafd2'
-            '20dee6f07630f44f5f09f0d63004efadc9f0904d9e36109f013b71ef06940010')
+            'd856f53e88e50019c5915d6b8f12af008202f2c7b2cfecfc678cb932072814a4')
 
 prepare() {
   cd nix
