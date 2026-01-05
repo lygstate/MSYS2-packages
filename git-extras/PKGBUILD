@@ -19,6 +19,7 @@ build(){
   bsdtar -zxf "${_realname}-${pkgver}.tar.gz" || true
 
   cd "${srcdir}/${_realname}-${pkgver}"
+  rm bin/git-rscp
   cp bin/git-scp bin/git-rscp
 }
 
