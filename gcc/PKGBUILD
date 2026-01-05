@@ -237,9 +237,60 @@ build() {
     --with-system-zlib \
     --enable-linker-build-id \
     --enable-libstdcxx-filesystem-ts
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
+    # stage2 gcc linkage to msys, gcc-libs linkage to cygwin without hack
+    make
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    # stage1 gcc linkage to cygwin, do not build gcc-libs
+    make all-host
+    rm -rf ${srcdir}/dest-install
+    DESTDIR=${srcdir}/dest-install \
+    make -j1 install-host
 
-  export PATH=${srcdir}/build-MSYS/x86_64-pc-cygwin/libgcc/shlib:$PATH
-  make
+    MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
+    sh ${pkg_root_dir}/build-install/gcc-prepare.sh
+
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
+    # stage0 gcc linkage to msys, gcc-libs linkage to cygwin
+
+    # First getting gcc/gcc-libs linkage to msys
+    make
+
+    # Then getting gcc-libs linkage to cygwin
+    cd ${srcdir}/gcc-${pkgver}
+
+    apply_patch_with_msg \
+      0021-gcc_libs-linkage-to-_cygwin_dll_entry.patch
+
+    cd ${srcdir}/gcc-${pkgver}/libatomic
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libgcc
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libgomp
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libquadmath
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    cd ${srcdir}/gcc-${pkgver}/libstdc++-v3
+    WANT_AUTOCONF="2.69" autoreconf --force
+
+    echo "Rebuilding the gcc-libs"
+
+    # Gcc libs linkage cygwin dll
+    MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
+    sh ${pkg_root_dir}/build-install/gcc-prepare.sh
+
+    cd ${srcdir}/build-MSYS
+    export PATH=${srcdir}/build-MSYS/x86_64-pc-cygwin/libgcc/shlib:$PATH
+    rm -rf x86_64-pc-cygwin
+    make
+  else
+    echo "Invalid stage $MSYS_BOOTSTRAP_STAGE"
+    exit -1
+  fi
 
   # make documentation
   #cd $CHOST/libstdc++-v3
@@ -258,21 +309,40 @@ package_gcc-libs()
 {
   pkgdesc="Runtime libraries shipped by GCC"
 
-  cd ${srcdir}/build-MSYS
-  make -j1 -C $CHOST/libgcc DESTDIR=${pkgdir} install-shared
-  for lib in libgomp libstdc++-v3/src; do
-    make -j1 -C $CHOST/$lib DESTDIR=${pkgdir} install-toolexeclibLTLIBRARIES
-  done
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    rm -rf  ${pkgdir}
+    cp -arf ${srcdir}/dest ${pkgdir}
+    pushd ${pkgdir}/usr/share/info
+      rm *.info
+      rm dir
+      gunzip libgomp.info.gz
+      gunzip libquadmath.info.gz
+      rm *.gz
+    popd
+    rm -rf ${pkgdir}/usr/bin/*.exe
+    rm -rf ${pkgdir}/usr/bin/cc
+    rm -rf ${pkgdir}/usr/bin/c99
+    rm -rf ${pkgdir}/usr/bin/c89
+    rm -rf ${pkgdir}/usr/share/licenses
+    rm -rf ${pkgdir}/usr/share/locale
+    rm -rf ${pkgdir}/usr/share/man
+  else
+    cd ${srcdir}/build-MSYS
+    make -j1 -C $CHOST/libgcc DESTDIR=${pkgdir} install-shared
+    for lib in libgomp libstdc++-v3/src; do
+      make -j1 -C $CHOST/$lib DESTDIR=${pkgdir} install-toolexeclibLTLIBRARIES
+    done
 
-  make -j1 -C $CHOST/libstdc++-v3/po DESTDIR=${pkgdir} install
-  make -j1 -C $CHOST/libgomp DESTDIR=${pkgdir} install-info
-  make -j1 -C $CHOST/libquadmath DESTDIR=${pkgdir} install-info
+    make -j1 -C $CHOST/libstdc++-v3/po DESTDIR=${pkgdir} install
+    make -j1 -C $CHOST/libgomp DESTDIR=${pkgdir} install-info
+    make -j1 -C $CHOST/libquadmath DESTDIR=${pkgdir} install-info
 
-  make -j1 DESTDIR=${pkgdir} install-target-libquadmath
-  #make -j1 DESTDIR=${pkgdir} install-target-libssp
-  make -j1 DESTDIR=${pkgdir} install-target-libatomic
-  #make -j1 DESTDIR=${pkgdir} install-target-libcilkrts
-  make -j1 DESTDIR=${pkgdir} install-target-libvtv
+    make -j1 DESTDIR=${pkgdir} install-target-libquadmath
+    #make -j1 DESTDIR=${pkgdir} install-target-libssp
+    make -j1 DESTDIR=${pkgdir} install-target-libatomic
+    #make -j1 DESTDIR=${pkgdir} install-target-libcilkrts
+    make -j1 DESTDIR=${pkgdir} install-target-libvtv
+  fi
 
   rm -f ${pkgdir}/*.dll
   rm -rf ${pkgdir}/usr/lib/
@@ -300,7 +370,15 @@ package_gcc()
     export STRIP=true
   fi
 
-  make -j1 DESTDIR=${pkgdir} install
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
+    rm -rf  ${pkgdir}
+    cp -arf ${srcdir}/dest ${pkgdir}
+    rm ${pkgdir}/usr/bin/cc
+    find ${pkgdir}/usr/share/info | grep info.gz$ | xargs -I ARG rm -f ARG
+    rm -rf ${pkgdir}/usr/share/licenses
+  else
+    make -j1 DESTDIR=${pkgdir} install
+  fi
   # install -d ${pkgdir}/usr/share/gdb/auto-load/usr/lib
   # mv $pkg{pkgdir}dir{,/usr/share/gdb/auto-load}/usr/lib/libstdc++.so.6.0.18-gdb.py
 
