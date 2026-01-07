@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.6.6
-pkgrel=1
+pkgrel=2
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('x86_64')
 url="https://www.cygwin.com/"
@@ -67,9 +67,21 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0035-Revert-Cygwin-Enable-dynamicbase-on-the-Cygwin-DLL-b.patch
         0036-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
         0037-uname-report-msys2-runtime-commit-hash-too.patch
-        0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch)
+        0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch
+        0039-Revert-strace.cc-Don-t-set-MSYS-noglob.patch
+        0040-Revert-Rename-dll-from-cygwin-to-msys.patch
+        0041-Revert-Fix-msys-library-name-in-import-libraries.patch
+        0042-Revert-uname-allow-setting-the-system-name-to-CYGWIN.patch
+        0043-Revert-Add-functionality-for-changing-OS-name-via-MS.patch
+        0044-Add-functionality-for-changing-OS-name-via-MSYSTEM-e.patch
+        0045-Support-for-both-cygwin-and-msys2.patch
+        0046-Support-for-both-MSYS-and-CYGWIN-environment-variabl.patch
+        0047-strace.cc-Don-t-set-CYGWIN-noglob.patch
+        0048-Convert-to-use-msys-style-named-pipe.patch
+        0049-Rename-dll-from-cygwin-to-msys.patch
+        0050-Fix-msys-library-name-in-import-libraries.patch)
 sha256sums=('4acc146baed79e6a4594bebf562125d4d6f66c9d1f53f89a1e47d156799508dc'
-            '0690fbab79ccb94e79694b6bad4b2bafe808d208131a3f33b14faa4e937ef9a2'
+            '5206e01f9a8b88b937bdea79f7a0eefd238ec0a9984b7f0dca28015085e091e0'
             'd3c997a88bef74e70c7b394ee5c4f63ea758784325809b665724aa521f0fbd70'
             '8b366b9e4925108369e9bd3ea9daaac1903db6599e5586629663e7db2699d406'
             'eb3e71319aa1f0d02c398c4f3ce392a49d1600e89e64782021d732a1eda857ba'
@@ -107,7 +119,19 @@ sha256sums=('4acc146baed79e6a4594bebf562125d4d6f66c9d1f53f89a1e47d156799508dc'
             '9c43e96e7f25776249bc16c25796a3386892391bf3cdb79624e4af5dc8e38c83'
             '897dbcf17d65e6ec44841fff7e821bb9ed9560fcd8a177fbdfa987ee8cfe158b'
             'f521b0b8f0331e4f884aec46178d1d94cbc3ce83e0b2452603b06c4a355c47d3'
-            'fa97dbea1dd01a4e1e15f5d3bacd76fe2cdd70c792e78bb8a48b42dad9ec7229')
+            'fa97dbea1dd01a4e1e15f5d3bacd76fe2cdd70c792e78bb8a48b42dad9ec7229'
+            '4cd1c05ed737136580c7e9b4202108636af7b980a1a03775487a0d3723cb615d'
+            'f385209c5934057390f8d63786f5b9f85d56e93dc7b9c7f445e7b5f034874115'
+            '9464a634f8119047cd9966fb0812be09d84f7579f7663a433e432ecfbb5a694d'
+            'ece3b2b9730a58bf9ecd68c9134cd1cdab011a9e66f5d36e92fdf86b491fd889'
+            '2b747f93feec3be446bd7a8dec3d839640f362e54fcd6b0d3f6543c7013454dd'
+            '4ea04fef13a49b2613d99fd25ac3f5773da01349366d3a33905f9f767e136eca'
+            'd749e21a8658150341cdfbf058499120c4bf51abb4ad1e66da09c68d993ef141'
+            'bab0a07b68b9e9f66b70cccb71b8174494b2fd915b359fce2c212f30145a4b85'
+            'cec973e409668fe2c9d0600cec508226c6f768305bae0ac72a78ea34addda94a'
+            'dc6241a551469b0880ae53f7b2c31f8ac6493175b26af93f779c531be35f92c2'
+            '1a8203e64e0080639fe8f019f77acc837b307310bbaae6c3bbcf3d7c45733927'
+            'c5ea1372b7c3ef0614c053e84c8df644b39d1dd70551119bcecf6468661d79bc')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -183,7 +207,19 @@ prepare() {
   0035-Revert-Cygwin-Enable-dynamicbase-on-the-Cygwin-DLL-b.patch \
   0036-Avoid-sharing-cygheaps-across-Cygwin-versions.patch \
   0037-uname-report-msys2-runtime-commit-hash-too.patch \
-  0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch
+  0038-Cygwin-Adjust-CWD-magic-to-accommodate-for-the-lates.patch \
+  0039-Revert-strace.cc-Don-t-set-MSYS-noglob.patch \
+  0040-Revert-Rename-dll-from-cygwin-to-msys.patch \
+  0041-Revert-Fix-msys-library-name-in-import-libraries.patch \
+  0042-Revert-uname-allow-setting-the-system-name-to-CYGWIN.patch \
+  0043-Revert-Add-functionality-for-changing-OS-name-via-MS.patch \
+  0044-Add-functionality-for-changing-OS-name-via-MSYSTEM-e.patch \
+  0045-Support-for-both-cygwin-and-msys2.patch \
+  0046-Support-for-both-MSYS-and-CYGWIN-environment-variabl.patch \
+  0047-strace.cc-Don-t-set-CYGWIN-noglob.patch \
+  0048-Convert-to-use-msys-style-named-pipe.patch \
+  0049-Rename-dll-from-cygwin-to-msys.patch \
+  0050-Fix-msys-library-name-in-import-libraries.patch
 }
 
 build() {
