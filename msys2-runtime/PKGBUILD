@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.6.5
-pkgrel=2
+pkgrel=3
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('x86_64')
 url="https://www.cygwin.com/"
@@ -73,9 +73,10 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0041-Cygwin-is_console_app-deal-with-the-.bat-.cmd-file-e.patch
         0042-Cygwin-path-Implement-path_conv-is_app_execution_ali.patch
         0043-Cygwin-termios-Change-argument-of-fhandler_termios-s.patch
-        0044-Cygwin-termios-Handle-app-execution-alias-in-is_cons.patch)
+        0044-Cygwin-termios-Handle-app-execution-alias-in-is_cons.patch
+        0045-Support-for-both-cygwin-and-msys2.patch)
 sha256sums=('a47fbb6b35c13af8cb95e518a66316615a0e1bade268a42b5cd813cbe247178e'
-            '002ce73a216fdf7e6463e664bb8375cadc966da5598bf3d041f97a5802fccacb'
+            '273ad73b740454d8e25aa14f3ab653a6173ca0f50978e3752ada076e8202b1a5'
             'bae2d143778f820633d7716608ddf47fab7305f65b7a97fa159ef9b6b8ece20b'
             '423bd5f9980f4435a1f287b127cebf27bcd46e8ee868a6988c89a30a464f48a7'
             'd2da62de25a8cb2ccc824e2b47b82863bc4a2d81790109e44f464c9e99fd1518'
@@ -119,7 +120,8 @@ sha256sums=('a47fbb6b35c13af8cb95e518a66316615a0e1bade268a42b5cd813cbe247178e'
             'a9ad902d234a929a4fd647ca3da666f02c7b8c6142a727cca2534bed8aa710d8'
             '27da560ed7f8d162cf5c71a9c7e5f1f4dd72b7bd444032b05775888de5da3520'
             'd00246819e543e843b009ad98250a947af0acd8c06f90779ee727b5dd1e2a3e9'
-            'b803501a22cf51979f5800a9f37b86c5112e5b27c96d0ef12429b0fac1fe44a1')
+            'b803501a22cf51979f5800a9f37b86c5112e5b27c96d0ef12429b0fac1fe44a1'
+            '4f0e23ddaabb34f86723f58eaec0c552ccfb4f2f742ba487f6529330a3e52e46')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -201,7 +203,8 @@ prepare() {
   0041-Cygwin-is_console_app-deal-with-the-.bat-.cmd-file-e.patch \
   0042-Cygwin-path-Implement-path_conv-is_app_execution_ali.patch \
   0043-Cygwin-termios-Change-argument-of-fhandler_termios-s.patch \
-  0044-Cygwin-termios-Handle-app-execution-alias-in-is_cons.patch
+  0044-Cygwin-termios-Handle-app-execution-alias-in-is_cons.patch \
+  0045-Support-for-both-cygwin-and-msys2.patch
 }
 
 build() {
