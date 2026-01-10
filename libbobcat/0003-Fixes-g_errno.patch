@@ -1,0 +1,106 @@
+From ae553519c3addd629e6e94afee5739248123d597 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 10 Jan 2026 19:09:10 +0800
+Subject: [PATCH 3/4] Fixes g_errno
+
+---
+ bobcat/exception/data.cc       | 4 ++++
+ bobcat/exception/exception     | 2 +-
+ bobcat/exception/exception.f   | 2 +-
+ bobcat/exception/exception1.cc | 2 +-
+ bobcat/icmake/install          | 4 +++-
+ bobcat/icmake/libraries        | 8 ++++----
+ 6 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/bobcat/exception/data.cc b/bobcat/exception/data.cc
+index 0ff41c5d..65d1d994 100644
+--- a/bobcat/exception/data.cc
++++ b/bobcat/exception/data.cc
+@@ -1,4 +1,8 @@
+ namespace FBB
+ {
+     thread_local int g_errno;
++    int &getErrno()
++    {
++        return g_errno;
++    }
+ }
+diff --git a/bobcat/exception/exception b/bobcat/exception/exception
+index cda4e7b4..680e1913 100644
+--- a/bobcat/exception/exception
++++ b/bobcat/exception/exception
+@@ -10,7 +10,7 @@
+ namespace FBB
+ {
+ 
+-extern thread_local int g_errno;
++extern int &getErrno();
+ 
+ class Exception: public std::exception
+ {
+diff --git a/bobcat/exception/exception.f b/bobcat/exception/exception.f
+index 9bb9c915..68df0e0c 100644
+--- a/bobcat/exception/exception.f
++++ b/bobcat/exception/exception.f
+@@ -1,4 +1,4 @@
+ inline Exception::Exception()
+ {
+-    g_errno = 0;
++    getErrno() = 0;
+ }
+diff --git a/bobcat/exception/exception1.cc b/bobcat/exception/exception1.cc
+index 425a8c21..cabce254 100644
+--- a/bobcat/exception/exception1.cc
++++ b/bobcat/exception/exception1.cc
+@@ -2,5 +2,5 @@
+ 
+ Exception::Exception(int errnoValue)
+ {
+-    g_errno = errno = errnoValue;
++    getErrno() = errno = errnoValue;
+ }
+diff --git a/bobcat/icmake/install b/bobcat/icmake/install
+index ff026944..f136484b 100644
+--- a/bobcat/icmake/install
++++ b/bobcat/icmake/install
+@@ -85,7 +85,9 @@ void install(string request, string dest)
+         printf("\n  installing the manual pages\n");
+     
+         logZip("tmp/man/man3",  "", base + MAN "/man3");
+-    
++        
++        chdir(g_cwd + base + MAN "/man3");
++        
+         run("ln -sf iterator.3bobcat.gz reverseiterator.3bobcat.gz");
+     
+         logZip("tmp/man/man7",  "", base + MAN "/man7");
+diff --git a/bobcat/icmake/libraries b/bobcat/icmake/libraries
+index 56feb44d..24aa481a 100644
+--- a/bobcat/icmake/libraries
++++ b/bobcat/icmake/libraries
+@@ -131,7 +131,7 @@ void _shared_library(string libso, string libsoshared,
+         run(gxx +  
+                     " " + setOpt(LDFLAGS, "LDFLAGS") +
+                     " -pthread -shared -Wl,--as-needed,"
+-                    "-z,defs,-soname," + 
++                    "-soname," + 
+                     libsomajor +
+                     " -o " + g_tmplibso + "/" + libsoshared +
+                     " */os/*.o " +
+@@ -145,10 +145,10 @@ void _shared_library(string libso, string libsoshared,
+         run("chmod -x " + libsoshared);
+         
+         run("ln -sf " + libsoshared + " " + libsomajor);
+-
++        
+         chdir(g_cwd + g_tmpliba);
+-
+-        run("ln -sf " + libsomajor  + " " + libso);
++        
++        run("ln -sf "+ g_cwd + g_tmplibso + "/" + libsomajor  + " " + libso);
+     
+         chdir(g_cwd);
+         // run("rm -f */os/*");
+-- 
+2.52.0.windows.1
+
