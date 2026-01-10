@@ -1,7 +1,7 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=m4
-pkgver=1.4.19
+pkgver=1.4.20
 pkgrel=2
 pkgdesc="The GNU macro processor"
 arch=('i686' 'x86_64')
@@ -16,11 +16,13 @@ makedepends=('libiconv-devel' 'autotools' 'gcc')
 source=(https://ftp.gnu.org/gnu/m4/$pkgname-$pkgver.tar.xz{,.sig}
         '0001-m4-1.4.19-tests-refine-error-messages.patch'
         '0002-m4-1.4.19-skip-tests-when-temp-directories-cannot-be-generated.patch'
+        '0003-update-lib-string.in.h-for-building-with-cygwin.patch'
         'gnulib-weak.patch')
-sha256sums=('63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96'
+sha256sums=('e236ea3a1ccf5f6c270b1c4bb60726f371fa49459a8eaaebc90b216b328daf2b'
             'SKIP'
             'b413328e2a06ea5aba102ef28038b1b0f3b4a083ef952bf37e58ec2823a14cd0'
             '6be0fbe1f9cdf2765869a9dbf97e6bac8221c16d63df6639af27cb592567dcd8'
+            'a5602d356259caa6d625ed4b043611a8497f04f0478fef77fcf2b007c1443ecd'
             '1b8719570c7132625a31e017a7c864e30f6057c178a845433d80e4b246ed913d')
 validpgpkeys=('71C2CC22B1C4602927D2F3AAA7A16B4A2527436A')  # Eric Blake <eblake@redhat.com>
 
@@ -28,34 +30,36 @@ validpgpkeys=('71C2CC22B1C4602927D2F3AAA7A16B4A2527436A')  # Eric Blake <eblake@
 prepare() {
   pushd "${srcdir}/${pkgname}-${pkgver}"
 
-    patch -p1 -i '../0001-m4-1.4.19-tests-refine-error-messages.patch'
-    patch -p1 -i '../0002-m4-1.4.19-skip-tests-when-temp-directories-cannot-be-generated.patch'
-    patch -p1 -i "${srcdir}/gnulib-weak.patch"
+  patch -p1 -i "${srcdir}/0001-m4-1.4.19-tests-refine-error-messages.patch"
+  patch -p1 -i "${srcdir}/0002-m4-1.4.19-skip-tests-when-temp-directories-cannot-be-generated.patch"
+  patch -p1 -i "${srcdir}/0003-update-lib-string.in.h-for-building-with-cygwin.patch"
+  patch -p1 -i "${srcdir}/gnulib-weak.patch"
 
-  autoreconf -vfi
+  autoreconf -vf
   popd
 }
 
 build() {
-  mkdir -p build-${pkgname}-${pkgver}_${MSYSTEM_CHOST}
-  pushd build-${pkgname}-${pkgver}_${MSYSTEM_CHOST}
-    # fool configure that gcc is CYGWIN (which it essentially is)
-    ../${pkgname}-${pkgver}/configure -C \
-      --host="$(gcc -dumpmachine | sed 's|-msys$|-cygwin|')" CC=gcc \
-      --prefix=/usr \
-      --sysconfdir=/etc \
-      --localstatedir=/var \
-      --with-syscmd-shell=/usr/bin/sh \
-      --disable-nls \
-      --enable-threads
+  mkdir -p "${srcdir}/build-${CHOST}"
+  pushd "${srcdir}/build-${CHOST}"
 
-    make
+  # fool configure that gcc is CYGWIN (which it essentially is)
+  ../${pkgname}-${pkgver}/configure -C \
+    --host=${CHOST} \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --with-syscmd-shell=/usr/bin/sh.exe \
+    --disable-nls \
+    --enable-threads
+
+  make
 
   popd
 }
 
 check() {
-  pushd build-${pkgname}-${pkgver}_${MSYSTEM_CHOST}
+  pushd "${srcdir}/build-${CHOST}"
 
     # m4 1.4.19: all CHECKS succeeded except for the following tests related
     # to GNULIB, only, which are expected to fail here:
@@ -76,7 +80,7 @@ check() {
 }
 
 package() {
-  make -C build-${pkgname}-${pkgver}_${MSYSTEM_CHOST} DESTDIR="${pkgdir}" install
+  make -C "${srcdir}/build-${CHOST}" DESTDIR="${pkgdir}" install
 
   # install license
   mkdir -p "${pkgdir}/usr/share/licenses/${pkgname}"
