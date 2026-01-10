@@ -1,0 +1,154 @@
+From 1e309b36ebe14356cc751ffd4ab8d1d36a7d6cdb Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 10 Jan 2026 19:07:50 +0800
+Subject: [PATCH 2/4] Fixes building with gcc
+
+---
+ bobcat/configfile/build        | 14 +++-----------
+ bobcat/hostname/build          | 14 +++-----------
+ bobcat/icmake/libraries        |  4 ++--
+ bobcat/linearmap/driver/build  |  2 +-
+ bobcat/redirector/driver/build |  4 ++--
+ bobcat/signal/signal           |  1 +
+ 6 files changed, 12 insertions(+), 27 deletions(-)
+
+diff --git a/bobcat/configfile/build b/bobcat/configfile/build
+index 3debf775..33ae8abf 100755
+--- a/bobcat/configfile/build
++++ b/bobcat/configfile/build
+@@ -298,10 +298,8 @@ void link_solib(string library)
+             version;
+     
+         version = strtok(BUILD_LIBRARY, ".");
+-        libso = "lib" + library + ".so";
+-        libxxx = libso + ".";
+-        libsomajor = libxxx + element(0, version);
+-        libxxx += BUILD_LIBRARY;
++        libxxx = "cyg" + library + ".dll";
++        libso = "lib" + library + ".dll.a";
+     
+         for (index = 0; index < nClasses; index++)
+         {
+@@ -318,7 +316,7 @@ void link_solib(string library)
+         exec(COMPILER,
+             gdb,
+             "-shared",
+-            "-Wl,-soname," + libsomajor,
++            "-Wl,--out-implib," + libso,
+             "-o", libxxx,
+             ofiles,
+             libs,
+@@ -335,12 +333,6 @@ void link_solib(string library)
+             chdir(cwd);                     // go back to parent dir
+         }
+     
+-    
+-        exec("ln", "-sf", libxxx, libsomajor);
+-        printf("ok: ", libsomajor, "\n");
+-    
+-        exec("ln", "-sf", libsomajor, libso);
+-        printf("ok: ", libso, "\n");
+     #endif
+ }
+ /*
+diff --git a/bobcat/hostname/build b/bobcat/hostname/build
+index c51d87c0..bc6570f4 100755
+--- a/bobcat/hostname/build
++++ b/bobcat/hostname/build
+@@ -409,10 +409,8 @@ void link_solib(string library)
+             version;
+     
+         version = strtok(BUILD_LIBRARY, ".");
+-        libso = "lib" + library + ".so";
+-        libxxx = libso + ".";
+-        libsomajor = libxxx + element(0, version);
+-        libxxx += BUILD_LIBRARY;
++        libxxx = "cyg" + library + ".dll";
++        libso = "lib" + library + ".dll.a";
+     
+         for (index = 0; index < nClasses; index++)
+         {
+@@ -429,7 +427,7 @@ void link_solib(string library)
+         exec(COMPILER,
+             gdb,
+             "-shared",
+-            "-Wl,-soname," + libsomajor,
++            "-Wl,--out-implib," + libso,
+             "-o", libxxx,
+             ofiles,
+             libs,
+@@ -446,12 +444,6 @@ void link_solib(string library)
+             chdir(cwd);                     // go back to parent dir
+         }
+     
+-    
+-        exec("ln", "-sf", libxxx, libsomajor);
+-        printf("ok: ", libsomajor, "\n");
+-    
+-        exec("ln", "-sf", libsomajor, libso);
+-        printf("ok: ", libso, "\n");
+     #endif
+ }
+ /*
+diff --git a/bobcat/icmake/libraries b/bobcat/icmake/libraries
+index bf384e8a..56feb44d 100644
+--- a/bobcat/icmake/libraries
++++ b/bobcat/icmake/libraries
+@@ -183,8 +183,8 @@ void libraries(int keepPch, string libname, int all, int strip, int select,
+     static_library(staticLib);              // build static library
+ 
+ #ifdef BUILD_SHARED
+-    libso = "lib" LIBRARY ".so";
+-    libsoshared = libso + "." + g_version;
++    libso = "cyg" LIBRARY ".dll";
++    libsoshared = "lib" LIBRARY ".dll.a";
+ 
+     g_copt += " -fPIC";
+                                           // adds option for shared lib
+diff --git a/bobcat/linearmap/driver/build b/bobcat/linearmap/driver/build
+index b627bcc5..e57988c8 100755
+--- a/bobcat/linearmap/driver/build
++++ b/bobcat/linearmap/driver/build
+@@ -1,4 +1,4 @@
+ #!/bin/bash
+ 
+-g++-8 --std=c++17 -Wall -fdiagnostics-color=never -o driver -I. driver.cc \
++g++ --std=c++17 -Wall -fdiagnostics-color=never -o driver -I. driver.cc \
+        -lbobcat -s
+diff --git a/bobcat/redirector/driver/build b/bobcat/redirector/driver/build
+index fad5c3dc..90e8436e 100755
+--- a/bobcat/redirector/driver/build
++++ b/bobcat/redirector/driver/build
+@@ -232,7 +232,7 @@ list file_list(string type, string library)
+ void link(string library)
+ {
+     printf("\n");
+-    system("mv ../../lib/libbobcat.so ../../lib/libbobcat.OFF");
++    system("mv ../../lib/cygbobcat.dll ../../lib/cygbobcat.OFF");
+     exec(COMPILER, "-o", programname,
+              ofiles,
+          libs,
+@@ -241,7 +241,7 @@ void link(string library)
+             , "-s"
+         #endif
+     );
+-    system("mv ../../lib/libbobcat.OFF ../../lib/libbobcat.so");
++    system("mv ../../lib/cygbobcat.OFF ../../lib/cygbobcat.dll");
+     printf("ok: ", programname, "\n");
+ }
+ /*
+diff --git a/bobcat/signal/signal b/bobcat/signal/signal
+index 0e612dc2..c1e51dfd 100644
+--- a/bobcat/signal/signal
++++ b/bobcat/signal/signal
+@@ -3,6 +3,7 @@
+ 
+ #include <vector>
+ #include <csignal>
++#include <signal.h>
+ 
+ namespace FBB
+ {
+-- 
+2.52.0.windows.1
+

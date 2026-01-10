@@ -1,0 +1,24 @@
+From 33adb76a89d276e966f5ce95b10aa4393164d174 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 10 Jan 2026 18:55:09 +0800
+Subject: [PATCH 1/4] Add missing header
+
+---
+ bobcat/datetime/datetime | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/bobcat/datetime/datetime b/bobcat/datetime/datetime
+index 36751ace..1c726b4d 100644
+--- a/bobcat/datetime/datetime
++++ b/bobcat/datetime/datetime
+@@ -8,6 +8,7 @@
+ #include <chrono>
+ #include <mutex>
+ #include <memory>
++#include <string>
+ 
+ namespace FBB
+ {
+-- 
+2.52.0.windows.1
+
