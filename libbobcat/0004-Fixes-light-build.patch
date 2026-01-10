@@ -1,0 +1,36 @@
+From 6344e3cb4b5f49c0ff2da59bfc803f711d366fbc Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sat, 10 Jan 2026 19:09:45 +0800
+Subject: [PATCH 4/4] Fixes light build
+
+---
+ bobcat/CLASSES    | 1 -
+ bobcat/SSLCLASSES | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bobcat/CLASSES b/bobcat/CLASSES
+index 8deedc63..c245339f 100644
+--- a/bobcat/CLASSES
++++ b/bobcat/CLASSES
+@@ -111,6 +111,5 @@ tty
+ typetrait
+ user
+ x2a
+-cryptbuf
+ eoibuf
+ eoi
+diff --git a/bobcat/SSLCLASSES b/bobcat/SSLCLASSES
+index c17ccdda..70b975ec 100644
+--- a/bobcat/SSLCLASSES
++++ b/bobcat/SSLCLASSES
+@@ -3,6 +3,7 @@
+ pf_iterator
+ pf_iteratorstream
+ bigint
++cryptbuf
+ decryptbuf
+ diffiehellman
+ digestbuf
+-- 
+2.52.0.windows.1
+

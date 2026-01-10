@@ -13,15 +13,15 @@ makedepends=('icmake>=8.01.00' 'yodl>=3.07.01' 'gcc' 'git')
 optdepends=()
 # Use my own repo temporarily to avoid untaring soft link.
 source=("${pkgname}::git+https://gitlab.com/fbb-git/bobcat.git#tag=${pkgver}"
-        "fix-g_errno.patch"
-        "fix-build.patch"
-        "fix-light-build.patch"
-        "0001-missing-header.patch")
+        "0001-Add-missing-header.patch"
+        "0002-Fixes-building-with-gcc.patch"
+        "0003-Fixes-g_errno.patch"
+        "0004-Fixes-light-build.patch")
 sha256sums=('da1fa4d2c4649ab754dd9e94f753bd059f03eb92d3cbb7d5f4c2c7ada57e4ea9'
-            '875f0176b256897eb9e62656877255a909321c7268a6e0eedafc900ca04c0d55'
-            'd710f99c90e351d9b8a9927f0a41686489355404fcaf19c745e38323396d93b6'
-            'b2f2773d4486d4b2b3c3f6c20042a7eb3b01e7e2a75d5bd3b28761283b891d9d'
-            '5b043a14f152707df698a1aa4d5a4752613000f962f8002242f8620fba7aadb4')
+            '27bc4b0634d23d98ae00d434885ba64a9e858662c52d9612457f0df6a2508dcf'
+            '12a69601d8f7e0297b6b01ba1a4cbc3a0c3daa4857ca765ffaeb85e31a7ec4b8'
+            '295192cf598eb01bad54928a71decb8a9a9734d4a4dafb94ba642a297beac6a3'
+            '0824a0d3ed9b14f1e5bb103ed9ca0af5375768b8cd15d611f0aba1a8e2cdf21c')
 
 apply_patch_with_msg() {
   for _patch in "$@"
@@ -35,10 +35,10 @@ prepare() {
   cd "${srcdir}/${pkgbase}"
 
   apply_patch_with_msg \
-    fix-g_errno.patch \
-    fix-build.patch \
-    fix-light-build.patch \
-    0001-missing-header.patch
+    0001-Add-missing-header.patch \
+    0002-Fixes-building-with-gcc.patch \
+    0003-Fixes-g_errno.patch \
+    0004-Fixes-light-build.patch
 }
 build() {
   cd "${srcdir}/${pkgbase}/bobcat"
