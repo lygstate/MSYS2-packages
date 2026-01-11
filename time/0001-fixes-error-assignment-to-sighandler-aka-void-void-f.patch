@@ -1,0 +1,35 @@
+From 4c64de836e70887dbe1d946ff861e63a46129fda Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 11 Jan 2026 08:33:49 +0800
+Subject: [PATCH] fixes error: assignment to 'sighandler' {aka 'void
+ (*)(void)'} from incompatible pointer type '_sig_func_ptr' {aka 'void
+ (*)(int)'} [-Wincompatible-pointer-types]
+
+src/time.c:751:15: error: assignment to 'sighandler' {aka 'void (*)(void)'} from incompatible pointer type '_sig_func_ptr' {aka 'void (*)(int)'} [-Wincompatible-pointer-types]
+  751 |   quit_signal = signal (SIGQUIT, SIG_IGN);
+      |               ^
+src/time.c:79:22: note: 'sighandler' declared here
+   79 | typedef RETSIGTYPE (*sighandler) ();
+      |                      ^~~~~~~~~~
+/usr/include/cygwin/signal.h:303:16: note: '_sig_func_ptr' declared here
+  303 | typedef void (*_sig_func_ptr)(int);
+---
+ src/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/time.c b/src/time.c
+index 7e07995..ad733ba 100644
+--- a/src/time.c
++++ b/src/time.c
+@@ -76,7 +76,7 @@ enum
+ 
+ 
+ /* A Pointer to a signal handler.  */
+-typedef RETSIGTYPE (*sighandler) ();
++typedef RETSIGTYPE (*sighandler) (int);
+ 
+ /* msec = milliseconds = 1/1,000 (1*10e-3) second.
+    usec = microseconds = 1/1,000,000 (1*10e-6) second.  */
+-- 
+2.52.0.windows.1
+
