@@ -2,7 +2,7 @@
 
 pkgbase=icu
 pkgname=('icu' 'icu-devel')
-pkgver=78.1
+pkgver=78.2
 pkgrel=1
 pkgdesc="International Components for Unicode library"
 arch=('i686' 'x86_64')
@@ -16,7 +16,7 @@ depends=('gcc-libs' 'sh')
 makedepends=('autoconf-archive' 'autotools' 'gcc')
 source=("https://github.com/unicode-org/${pkgname}/releases/download/release-${pkgver}/${pkgname}4c-${pkgver}-sources.tgz"{,.asc}
         icu-59.1-msys2.patch)
-sha512sums=('c366398fdb50afc6355a8c45ed1d68a18eaa5f07a5d1c4555becbcfb9d4073e65ebe1e9caf24b93779b11b36cd813c98dd59e4b19f008851f25c7262811c112d'
+sha512sums=('92feddfe81c57336f386c7cbc9f6d976bf349db148a77a247c4559676f51116115c8c52c4d907feb50933f72ab75fd8e48be092bf9c8ca33a3e8fabc9372a5d6'
             'SKIP'
             'd3e7c7a65c000bd283d9fd843566ce499edff6580ac8b8004bdba219e47d0dc71c156548df711a08ffae0cb699e2f73fb2800af1850131c37124b1107faf897a')
 validpgpkeys=('E52F07877A5805F9AF4AB0ACD46C5610D06E7001')
