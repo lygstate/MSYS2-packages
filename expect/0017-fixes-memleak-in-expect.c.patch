@@ -1,0 +1,27 @@
+From 2643f016c7c736fff7204d20a371eca9ab252060 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:44:43 +0800
+Subject: [PATCH 17/21] fixes memleak in expect.c
+
+---
+ expect.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/expect.c b/expect.c
+index 704238e..c88b9fa 100644
+--- a/expect.c
++++ b/expect.c
+@@ -185,9 +185,9 @@ free_ecase(
+ {
+     if (ec->i_list->duration == EXP_PERMANENT) {
+ 	if (ec->pat)  { Tcl_DecrRefCount(ec->pat); }
+-	if (ec->gate) { Tcl_DecrRefCount(ec->gate); }
+ 	if (ec->body) { Tcl_DecrRefCount(ec->body); }
+     }
++    if (ec->gate) { Tcl_DecrRefCount(ec->gate); }
+ 
+     if (free_ilist) {
+ 	ec->i_list->ecount--;
+-- 
+2.52.0.windows.1
+

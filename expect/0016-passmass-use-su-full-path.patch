@@ -1,0 +1,25 @@
+From 24e2758f9feab4dfeba88b259600aa5ce7037d16 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:44:03 +0800
+Subject: [PATCH 16/21] passmass use su full path
+
+---
+ example/passmass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/example/passmass b/example/passmass
+index ef029aa..7b67352 100644
+--- a/example/passmass
++++ b/example/passmass
+@@ -178,7 +178,7 @@ for {set i 0} {$i<$argc} {incr i} {
+     }
+ 
+     if ($su) {
+-	send "su -\r"
++	send "/bin/su -\r"
+ 	expect -nocase "password:"
+ 	send "$password(old)\r"
+ 	expect "# "
+-- 
+2.52.0.windows.1
+

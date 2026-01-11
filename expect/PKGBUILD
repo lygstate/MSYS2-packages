@@ -4,7 +4,7 @@
 
 pkgname=expect
 pkgver=5.45.4
-pkgrel=6
+pkgrel=7
 pkgdesc="A tool for automating interactive applications"
 arch=('i686' 'x86_64')
 url="https://www.nist.gov/el/msid/expect.cfm"
@@ -15,13 +15,74 @@ license=('custom')
 depends=('tcl')
 makedepends=('autotools' 'gcc' 'tcl-devel')
 source=(https://sourceforge.net/projects/expect/files/Expect/${pkgver}/expect${pkgver}.tar.gz
-        5.45-openpty.patch)
+        0001-support-openpty.patch
+        # The following patches comes from https://src.fedoraproject.org/rpms/expect/tree/rawhide
+        0002-fixes-random.patch 
+        0003-fixes-log_file.patch
+        0004-fixes-pkgpath.patch
+        0005-fixes-covscan.patch
+        0006-tclsh8-fixes.patch
+        0007-unification-of-usage-and-man-page.patch
+        0008-check-telnet.patch
+        0009-fixes-exp_log-buf-overflow.patch
+        0010-fixes-fd-leak-in-exp_command.c.patch
+        0011-format-security-in-exp_clib.c.patch
+        0012-man-page-update.patch
+        0013-match-gt-numchars-segfault.patch
+        0014-mkpasswd-for-dash.patch
+        0015-mkpasswd.man-update.patch
+        0016-passmass-use-su-full-path.patch
+        0017-fixes-memleak-in-expect.c.patch
+        0018-fixes-segfault-with-stubs.patch
+        0019-fixes-with-c99.patch
+        0020-fixes-configure-with-c99.patch
+        0021-fixes-compile-with-c99-with-cygwin-gcc-15.2.patch)
 sha256sums=('49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34'
-            '51767a9781b8844280265b290ac894fda176b7b92dad9b868f07b4e83b478207')
+            '8b5e3a986a2d53d594d9d60d042f5aba5b56375bcce37e5feea605e8eee3c958'
+            '435add0b74c6e27c87653f1217e778c7cc40a2d2e59bba9237b9982e4ea7d24c'
+            '92f36a90dea18276af913bcb6a036fcf80b3b1a502baf27157be3149e866b087'
+            'd1a63e29108a32f46bf3b9381bc82022c518f1552bcf79be8e6fdbc192af7f19'
+            '937e1cbf715ae3ad315131ba2b6740192526e34a8644896bd549fd0983cb4431'
+            '9739fb44144c4894e8a8f0bd6c2cbe9cd2ff60e84b3e9d6ec1d405304ccd3fe6'
+            'e1f7a1f7e0a35de579c34d5bace7f2b98cf4db231a8932895daa6cebe0e23da2'
+            '05424d60a470f8a059e828efc06dfb350fb0ce0cfffb94d05e54371144eae0f5'
+            'f85e1111244720cba06a795dc54839d9fff09b6a8f951537f7d5f8532b35bd9c'
+            '1c7ebfa5f1e8f95d10308bf2deb6110d8a025cc276d1471a2026b56d74c3b640'
+            'e6426ef24e5397d8e20d295167979a26d1bf7332182500ee73755ca7e0f4ecb4'
+            '8016e10501cf80e7c14d34111650370d19db2a706c6bc0690c61504051433f14'
+            'a108bef96df9ec2e31524779ff9a6169d66e5c6c3aa78e94a8b2613a8b814a5c'
+            'f1b05cf192b2e36cceb9ce5e9c26e403d5af15e271284a404b5b11f4acad229b'
+            'a2540885cf0deab9336d7d2b182084939ce3cb67d813b495ddfcabc77a56b7bf'
+            'e037f2659e9c3cbed4a69971a631de206e70bca7e508a0593431dc4494f3f601'
+            '963c14e5e871549cadf8cd39b1f4f5f015d4cef3e6d69b09c8a6baa790a826fc'
+            'e110e1767f72d2f631de84abada2ce751955866489609b4ab932714af9702c0d'
+            'caa42759af63818153f8a1a40030ffc8428b598d8df93fe44aae3a8e13571b52'
+            '65a3084ac4e84c6f227f6a046cfbe0ec266e3b09c227402fd7fa7b1b7c223902'
+            '4a53a010a12f0b5bc074258a01de6708b401e5f3f0484f1dffbe4c5d69e49e5e')
 
 prepare() {
   cd ${srcdir}/expect${pkgver}
-  patch -p2 -i ${srcdir}/5.45-openpty.patch
+  patch -p1 -i ${srcdir}/0001-support-openpty.patch
+  patch -p1 -i ${srcdir}/0002-fixes-random.patch
+  patch -p1 -i ${srcdir}/0003-fixes-log_file.patch
+  # patch -p1 -i ${srcdir}/0004-fixes-pkgpath.patch
+  patch -p1 -i ${srcdir}/0005-fixes-covscan.patch
+  patch -p1 -i ${srcdir}/0006-tclsh8-fixes.patch
+  patch -p1 -i ${srcdir}/0007-unification-of-usage-and-man-page.patch
+  patch -p1 -i ${srcdir}/0008-check-telnet.patch
+  patch -p1 -i ${srcdir}/0009-fixes-exp_log-buf-overflow.patch
+  patch -p1 -i ${srcdir}/0010-fixes-fd-leak-in-exp_command.c.patch
+  patch -p1 -i ${srcdir}/0011-format-security-in-exp_clib.c.patch
+  patch -p1 -i ${srcdir}/0012-man-page-update.patch
+  patch -p1 -i ${srcdir}/0013-match-gt-numchars-segfault.patch
+  patch -p1 -i ${srcdir}/0014-mkpasswd-for-dash.patch
+  patch -p1 -i ${srcdir}/0015-mkpasswd.man-update.patch
+  patch -p1 -i ${srcdir}/0016-passmass-use-su-full-path.patch
+  patch -p1 -i ${srcdir}/0017-fixes-memleak-in-expect.c.patch
+  patch -p1 -i ${srcdir}/0018-fixes-segfault-with-stubs.patch
+  patch -p1 -i ${srcdir}/0019-fixes-with-c99.patch
+  patch -p1 -i ${srcdir}/0020-fixes-configure-with-c99.patch
+  patch -p1 -i ${srcdir}/0021-fixes-compile-with-c99-with-cygwin-gcc-15.2.patch
 
   autoreconf -vfi
 }

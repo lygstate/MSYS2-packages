@@ -1,0 +1,27 @@
+From 58f9ae6ad303e38c377b49477d64e8a5a076ea65 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:41:44 +0800
+Subject: [PATCH 11/21] format security in exp_clib.c
+
+---
+ exp_clib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/exp_clib.c b/exp_clib.c
+index 55ca098..34be3c8 100644
+--- a/exp_clib.c
++++ b/exp_clib.c
+@@ -1484,8 +1484,8 @@ expDiagLogU(str)
+      char *str;
+ {
+   if (exp_is_debugging) {
+-    fprintf(stderr,str);
+-    if (exp_logfile) fprintf(exp_logfile,str);
++    fprintf(stderr, "%s", str);
++    if (exp_logfile) fprintf(exp_logfile, "%s", str);
+   }
+ }
+ 
+-- 
+2.52.0.windows.1
+

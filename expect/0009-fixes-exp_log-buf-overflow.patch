@@ -1,0 +1,52 @@
+From a840b7855a9d07dddddd6d3ac9c63d694396b981 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:39:40 +0800
+Subject: [PATCH 09/21] fixes exp_log buf overflow
+
+---
+ exp_log.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/exp_log.c b/exp_log.c
+index 0ba485d..4131720 100644
+--- a/exp_log.c
++++ b/exp_log.c
+@@ -179,7 +179,7 @@ expStdoutLog TCL_VARARGS_DEF(int,arg1)
+ 	return;
+     }
+ 
+-    (void) vsprintf(bigbuf,fmt,args);
++    (void) vsnprintf(bigbuf,sizeof(bigbuf),fmt,args);
+     expDiagWriteBytes(bigbuf,-1);
+     if (tsdPtr->logAll || (LOGUSER && tsdPtr->logChannel)) Tcl_WriteChars(tsdPtr->logChannel,bigbuf,-1);
+     if (LOGUSER) fprintf(stdout,"%s",bigbuf);
+@@ -225,7 +225,7 @@ expErrorLog TCL_VARARGS_DEF(char *,arg1)
+     va_list args;
+ 
+     fmt = TCL_VARARGS_START(char *,arg1,args);
+-    (void) vsprintf(bigbuf,fmt,args);
++    (void) vsnprintf(bigbuf,sizeof(bigbuf),fmt,args);
+ 
+     expDiagWriteChars(bigbuf,-1);
+     fprintf(stderr,"%s",bigbuf);
+@@ -267,7 +267,7 @@ expDiagLog TCL_VARARGS_DEF(char *,arg1)
+ 
+     fmt = TCL_VARARGS_START(char *,arg1,args);
+ 
+-    (void) vsprintf(bigbuf,fmt,args);
++    (void) vsnprintf(bigbuf,sizeof(bigbuf),fmt,args);
+ 
+     expDiagWriteBytes(bigbuf,-1);
+     if (tsdPtr->diagToStderr) {
+@@ -310,7 +310,7 @@ expPrintf TCL_VARARGS_DEF(char *,arg1)
+   int len, rc;
+ 
+   fmt = TCL_VARARGS_START(char *,arg1,args);
+-  len = vsprintf(bigbuf,arg1,args);
++  len = vsnprintf(bigbuf,sizeof(bigbuf),arg1,args);
+  retry:
+   rc = write(2,bigbuf,len);
+   if ((rc == -1) && (errno == EAGAIN)) goto retry;
+-- 
+2.52.0.windows.1
+

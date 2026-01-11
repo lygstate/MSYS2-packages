@@ -1,0 +1,27 @@
+From ec076952397194b014377a99da96e434d9cfb7fa Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 02:25:19 +0800
+Subject: [PATCH 01/21] support openpty
+
+---
+ pty_termios.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/pty_termios.c b/pty_termios.c
+index c605b23..3884bcd 100644
+--- a/pty_termios.c
++++ b/pty_termios.c
+@@ -77,6 +77,10 @@ with openpty which supports 4000 while ptmx supports 60. */
+ #include <sys/sysmacros.h>
+ #endif
+ 
++#ifdef HAVE_OPENPTY
++#include <pty.h>
++#endif
++
+ #ifdef HAVE_PTYTRAP
+ #include <sys/ptyio.h>
+ #endif
+-- 
+2.52.0.windows.1
+

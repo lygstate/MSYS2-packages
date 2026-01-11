@@ -1,0 +1,25 @@
+From a4e459586e262778cdf9eba5309888f6b7905e8e Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:36:47 +0800
+Subject: [PATCH 03/21] fixes log_file
+
+---
+ exp_log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/exp_log.c b/exp_log.c
+index b378641..4d21aeb 100644
+--- a/exp_log.c
++++ b/exp_log.c
+@@ -499,7 +499,7 @@ expLogChannelOpen(interp,filename,append)
+ 	Tcl_DStringAppend(&tsdPtr->logFilename,filename,-1);
+     }
+ 
+-    tsdPtr->logChannel = Tcl_OpenFileChannel(interp,newfilename,mode,0777);
++    tsdPtr->logChannel = Tcl_OpenFileChannel(interp,newfilename,mode,0666);
+     if (!tsdPtr->logChannel) {
+ 	Tcl_DStringFree(&tsdPtr->logFilename);
+ 	return TCL_ERROR;
+-- 
+2.52.0.windows.1
+
