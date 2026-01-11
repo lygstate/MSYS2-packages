@@ -2,7 +2,7 @@
 
 pkgname=tzcode
 pkgver=2025c
-pkgrel=1
+pkgrel=2
 pkgdesc="Sources for time zone and daylight saving time data"
 arch=('i686' 'x86_64')
 url="https://www.iana.org/time-zones"
@@ -47,6 +47,8 @@ package() {
 
   make -j1 DESTDIR=${pkgdir} install
   mv ${pkgdir}/usr/share/zoneinfo-leaps ${pkgdir}/usr/share/zoneinfo/right
+  rm ${pkgdir}/usr/share/zoneinfo-posix
+  cp -rf ${pkgdir}/usr/share/zoneinfo ${pkgdir}/usr/share/zoneinfo-posix
   mv ${pkgdir}/usr/share/zoneinfo-posix ${pkgdir}/usr/share/zoneinfo/posix
 
   ./zic -y ./yearistype -d ${pkgdir}/usr/share/zoneinfo ${_timezones[@]}
