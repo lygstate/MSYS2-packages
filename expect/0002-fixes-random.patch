@@ -1,0 +1,32 @@
+From 2bdedeb87d9ef164c0b717166ac608d9cdd754ea Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:36:11 +0800
+Subject: [PATCH 02/21] fixes random
+
+---
+ example/mkpasswd | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/example/mkpasswd b/example/mkpasswd
+index 6016b56..3b1b03a 100644
+--- a/example/mkpasswd
++++ b/example/mkpasswd
+@@ -99,7 +99,14 @@ proc insert {pvar char} {
+ }
+ 
+ proc rand {m} {
+-    expr {int($m*rand())}
++    set device /dev/urandom            ;# /dev/random can block
++    set fileId [open $device r]
++    binary scan [read $fileId 4] i1 number
++    set clipped [expr $number % $m]
++#    puts "number is $number"
++#    puts "clipped is $clipped"
++    close $fileId
++    return $clipped
+ }
+ 
+ # choose left or right starting hand
+-- 
+2.52.0.windows.1
+

@@ -1,0 +1,25 @@
+From cb7a63a53ffb01e2c0612a0e063b9cfade6b859a Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:38:08 +0800
+Subject: [PATCH 06/21] tclsh8 fixes
+
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 8f36662..13ab9da 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -385,7 +385,7 @@ dist: dist-clean doc
+ 	cp $(DIST_ROOT)/$(PKG_DIR).tar.gz $(top_builddir)
+ 
+ $(SCRIPTS):
+-	$(TCLSH) $(srcdir)/fixline1 $(SHORT_BINDIR) < $(srcdir)/example/$@ > $@
++	$(TCLSH_ENV) sed -e s,tclsh,$(TCLSH_PROG), $(srcdir)/example/$@ | $(TCLSH_PROG) $(srcdir)/fixline1 $(SHORT_BINDIR) > $@
+ 
+ ## We cannot use TCL_LIBS below (after TCL_LIB_SPEC) because its
+ ## expansion references the contents of LIBS, which contains linker
+-- 
+2.52.0.windows.1
+

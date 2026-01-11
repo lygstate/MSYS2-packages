@@ -1,0 +1,82 @@
+From 7af17c491516d55b53bc84e9521f7439f544cdce Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:38:40 +0800
+Subject: [PATCH 07/21] unification of usage and man page
+
+---
+ exp_main_sub.c | 21 +++++++++++++++++++--
+ expect.man     |  5 ++++-
+ 2 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/exp_main_sub.c b/exp_main_sub.c
+index 499c0ae..0732736 100644
+--- a/exp_main_sub.c
++++ b/exp_main_sub.c
+@@ -73,7 +73,21 @@ usage(interp)
+ Tcl_Interp *interp;
+ {
+   char buffer [] = "exit 1";
+-  expErrorLog("usage: expect [-div] [-c cmds] [[-f] cmdfile] [args]\r\n");
++  expErrorLog("usage: expect [-dDhinNv] [-c cmds] [[-[f|b]] cmdfile] [args]\r\n"
++	"  Flags are as follows:\r\n"
++	"  -b     prefaces a file from which to read commands from\r\n"
++	"           (expect reads one line at a timei from the file)\r\n"
++	"  -c     prefaces a command to be executed before any in the script,\r\n"
++	"           may be used multiple times\r\n"
++	"  -d     enables diagnostic output\r\n"
++	"  -D     enables interactive debugger\r\n"
++	"  -f     prefaces a file from which to read commands from\r\n"
++	"           (expect reads the whole file at once)\r\n"
++	"  -h     prints this usage message and exits\r\n"
++	"  -i     interactively prompts for commands\r\n"
++	"  -n     expect doesn't read personal rc file\r\n"
++	"  -N     expect doesn't read system-wide rc file\r\n"
++	"  -v     prints version and exits\r\n");
+ 
+   /* SF #439042 -- Allow overide of "exit" by user / script
+    */
+@@ -701,7 +715,7 @@ char **argv;
+          * and generate a usage message.
+ 	 */
+ 
+-	while ((c = getopt(argc, argv, "+b:c:dD:f:inN-v")) != EOF) {
++	while ((c = getopt(argc, argv, "+b:c:dD:f:inN-vh")) != EOF) {
+ 		switch(c) {
+ 		case '-':
+ 			/* getopt already handles -- internally, however */
+@@ -769,6 +783,9 @@ char **argv;
+ 			  Tcl_Eval(interp, buffer); 
+ 			}
+ 			break;
++		case 'h':
++			usage(interp);
++			break;
+ 		default: usage(interp);
+ 		}
+ 	}
+diff --git a/expect.man b/expect.man
+index 1edff14..d06332f 100644
+--- a/expect.man
++++ b/expect.man
+@@ -4,7 +4,7 @@ expect \- programmed dialogue with interactive programs, Version 5
+ .SH SYNOPSIS
+ .B expect
+ [
+-.B \-dDinN
++.B \-dDhinNv
+ ]
+ [
+ .B \-c
+@@ -180,6 +180,9 @@ problems when reading from a fifo or stdin.
+ If the string "\-" is supplied as a filename, standard input is read instead.
+ (Use "./\-" to read from a file actually named "\-".)
+ .PP
++.B \-h
++causes Expect to print its usage message and exit.
++.PP
+ The
+ .B \-i
+ flag causes
+-- 
+2.52.0.windows.1
+

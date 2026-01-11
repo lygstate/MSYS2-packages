@@ -1,0 +1,26 @@
+From c9691077962cd3fb4161e081d40d61abd4f10289 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:43:12 +0800
+Subject: [PATCH 14/21] mkpasswd for dash
+
+---
+ example/mkpasswd | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/example/mkpasswd b/example/mkpasswd
+index 3b1b03a..70b4096 100644
+--- a/example/mkpasswd
++++ b/example/mkpasswd
+@@ -202,7 +202,8 @@ if {[info exists user]} {
+ 	expect {
+ 		"assword*:" {
+ 			# some systems say "Password (again):"
+-			send "$password\r"
++			send -- "$password\r"
++			# "--" because of passwords beginning with dash
+ 			exp_continue
+ 		}
+ 	}
+-- 
+2.52.0.windows.1
+

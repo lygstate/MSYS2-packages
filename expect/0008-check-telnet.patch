@@ -1,0 +1,44 @@
+From c7aa43758115715b9ac2097046fdaa0568828cec Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 12 Jan 2026 04:39:02 +0800
+Subject: [PATCH 08/21] check telnet
+
+---
+ example/passmass | 4 ++++
+ example/weather  | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/example/passmass b/example/passmass
+index e3c18e6..ef029aa 100644
+--- a/example/passmass
++++ b/example/passmass
+@@ -107,6 +107,10 @@ for {set i 0} {$i<$argc} {incr i} {
+ 	set login "ssh"
+ 	continue
+     } "-telnet" {
++	if {[file executable /usr/bin/telnet] == 0} {
++		send_user "It seems that telnet is not installed. Please install telnet in order to use the script with this option.\n"
++		exit 1
++	}
+ 	set login "telnet"
+ 	continue
+     } "-program" {
+diff --git a/example/weather b/example/weather
+index 4bd0e1b..ec3a145 100644
+--- a/example/weather
++++ b/example/weather
+@@ -33,6 +33,11 @@ set timeout 60
+ 
+ set env(TERM) vt100	;# actual value doesn't matter, just has to be set
+ 
++if {[file executable /usr/bin/telnet] == 0} {
++	send_user "It seems that telnet is not installed. Please install telnet in order to use this script.\n"
++	exit 1
++}
++
+ spawn telnet rainmaker.wunderground.com 3000
+ while {1} {
+ 	expect timeout {
+-- 
+2.52.0.windows.1
+
