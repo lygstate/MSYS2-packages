@@ -1,0 +1,281 @@
+From 2afb073af51dcf68324251c5d716a1def50c661e Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 13 Jan 2026 03:41:12 +0800
+Subject: [PATCH 48/N] More to compatible with msys2
+
+---
+ winsup/cygserver/cygserver-config               |  4 ++--
+ winsup/cygwin/Makefile.am                       |  1 +
+ winsup/cygwin/cygwin.sc.in                      |  4 ++++
+ winsup/cygwin/exceptions.cc                     | 11 +++++++++++
+ winsup/cygwin/include/cygwin/version.h          |  4 ++++
+ winsup/cygwin/local_includes/cygserver_setpwd.h |  4 ++++
+ winsup/cygwin/scripts/mkvers.sh                 |  6 +++---
+ winsup/cygwin/sec/auth.cc                       |  8 ++++----
+ winsup/cygwin/syscalls.cc                       |  4 ++--
+ winsup/cygwin/syslog.cc                         |  4 ++++
+ winsup/utils/mingw/cygcheck.cc                  | 11 ++++++-----
+ 11 files changed, 45 insertions(+), 16 deletions(-)
+
+diff --git a/winsup/cygserver/cygserver-config b/winsup/cygserver/cygserver-config
+index abda18644..1f0603f68 100755
+--- a/winsup/cygserver/cygserver-config
++++ b/winsup/cygserver/cygserver-config
+@@ -86,7 +86,7 @@ done
+ 
+ # Check if running on NT
+ _sys="`uname`"
+-_nt=`expr "${_sys}" : "CYGWIN_NT"`
++_nt=`expr "${_sys}" : "MSYS_NT"`
+ 
+ # Check for running cygserver processes first.
+ if ps -e | grep -v grep | grep -q ${service_name}
+@@ -178,7 +178,7 @@ then
+     echo "Do you want to install cygserver as service?"
+     if request "(Say \"no\" if it's already installed as service)"
+     then
+-      if ! cygrunsrv -I ${service_name} -d "CYGWIN cygserver" -p /usr/sbin/cygserver
++      if ! cygrunsrv -I ${service_name} -d "MSYS cygserver" -p /usr/sbin/cygserver
+       then
+         echo
+ 	echo "Installation of cygserver as service failed.  Please check the"
+diff --git a/winsup/cygwin/Makefile.am b/winsup/cygwin/Makefile.am
+index 86b2c5101..b89ba2a9d 100644
+--- a/winsup/cygwin/Makefile.am
++++ b/winsup/cygwin/Makefile.am
+@@ -643,6 +643,7 @@ $(LIB_NAME): $(DEF_FILE) $(LIBCOS) | $(NEW_DLL_NAME)
+ speclib=\
+ 	$(srcdir)/scripts/speclib $(toolopts) \
+ 	--exclude='cygwin' \
++	--exclude='msys' \
+ 	--exclude='(?i:dll)' \
+ 	--exclude='reloc' \
+ 	--exclude='^main$$' \
+diff --git a/winsup/cygwin/cygwin.sc.in b/winsup/cygwin/cygwin.sc.in
+index 69526f5d8..4dc5daed8 100644
+--- a/winsup/cygwin/cygwin.sc.in
++++ b/winsup/cygwin/cygwin.sc.in
+@@ -1,6 +1,10 @@
+ #ifdef __x86_64__
+ OUTPUT_FORMAT(pei-x86-64)
++# ifdef __MSYS__
++SEARCH_DIR("/usr/x86_64-pc-msys/lib/w32api"); SEARCH_DIR("=/usr/lib/w32api");
++# else
+ SEARCH_DIR("/usr/x86_64-pc-cygwin/lib/w32api"); SEARCH_DIR("=/usr/lib/w32api");
++# endif
+ #else
+ #error unimplemented for this target
+ #endif
+diff --git a/winsup/cygwin/exceptions.cc b/winsup/cygwin/exceptions.cc
+index 5e05f6fbb..6c0a6308f 100644
+--- a/winsup/cygwin/exceptions.cc
++++ b/winsup/cygwin/exceptions.cc
+@@ -529,6 +529,17 @@ int exec_prepared_command (PWCHAR command)
+   PWCHAR rawenv = GetEnvironmentStringsW () ;
+   for (PWCHAR p = rawenv; *p != L'\0'; p = wcschr (p, L'\0') + 1)
+     {
++      if (wcsncmp (p, L"MSYS=", wcslen (L"MSYS=")) == 0)
++	{
++	  PWCHAR q = wcsstr (p, L"error_start") ;
++	  /* replace 'error_start=...' with '_rror_start=...' */
++	  if (q)
++	    {
++	      *q = L'_' ;
++	      SetEnvironmentVariableW (L"MSYS", p + wcslen (L"MSYS=")) ;
++	    }
++	  break;
++	}
+       if (wcsncmp (p, L"CYGWIN=", wcslen (L"CYGWIN=")) == 0)
+ 	{
+ 	  PWCHAR q = wcsstr (p, L"error_start") ;
+diff --git a/winsup/cygwin/include/cygwin/version.h b/winsup/cygwin/include/cygwin/version.h
+index 69c19f535..45388dbe4 100644
+--- a/winsup/cygwin/include/cygwin/version.h
++++ b/winsup/cygwin/include/cygwin/version.h
+@@ -526,7 +526,11 @@ details. */
+ 
+ /* Identifiers used in the Win32 registry. */
+ 
++#ifdef __MSYS__
++#define CYGWIN_INFO_CYGWIN_REGISTRY_NAME "MSYS"
++#else
+ #define CYGWIN_INFO_CYGWIN_REGISTRY_NAME "Cygwin"
++#endif
+ #define CYGWIN_INFO_INSTALLATIONS_NAME   "Installations"
+ 
+ /* The default cygdrive prefix. */
+diff --git a/winsup/cygwin/local_includes/cygserver_setpwd.h b/winsup/cygwin/local_includes/cygserver_setpwd.h
+index fc1576b05..b2975111c 100644
+--- a/winsup/cygwin/local_includes/cygserver_setpwd.h
++++ b/winsup/cygwin/local_includes/cygserver_setpwd.h
+@@ -12,7 +12,11 @@ details. */
+ #include <sys/types.h>
+ #include "cygserver.h"
+ 
++#ifdef __MSYS__
++#define CYGWIN_LSA_KEY_PREFIX	L"L$MSYS_"
++#else
+ #define CYGWIN_LSA_KEY_PREFIX	L"L$CYGWIN_"
++#endif
+ 
+ #ifndef __INSIDE_CYGWIN__
+ class transport_layer_base;
+diff --git a/winsup/cygwin/scripts/mkvers.sh b/winsup/cygwin/scripts/mkvers.sh
+index 2fba21431..34d8d6dce 100755
+--- a/winsup/cygwin/scripts/mkvers.sh
++++ b/winsup/cygwin/scripts/mkvers.sh
+@@ -127,7 +127,7 @@ dir=$(echo $dir | sed -e 's%/include/cygwin.*$%%' -e 's%include/cygwin.*$%.%')
+ ) | while read var; do
+     read val
+ cat <<EOF
+-  "%%% Cygwin $var: $val\n"
++  "%%% MSYS $var: $val\n"
+ EOF
+ done | tee /tmp/mkvers.$$ 1>&9
+ 
+@@ -139,9 +139,9 @@ trap "rm -f /tmp/mkvers.$$" 0 1 2 15
+ #
+ cat <<EOF 1>&9
+ #ifdef DEBUGGING
+-  "%%% Cygwin shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "-$builddate\n"
++  "%%% MSYS shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "-$builddate\n"
+ #else
+-  "%%% Cygwin shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "\n"
++  "%%% MSYS shared id: " CYGWIN_VERSION_DLL_IDENTIFIER "S" shared_data_version "\n"
+ #endif
+   "END_CYGWIN_VERSION_INFO\n\0";
+ cygwin_version_info cygwin_version =
+diff --git a/winsup/cygwin/sec/auth.cc b/winsup/cygwin/sec/auth.cc
+index f9906a55c..2361ae5ff 100644
+--- a/winsup/cygwin/sec/auth.cc
++++ b/winsup/cygwin/sec/auth.cc
+@@ -462,7 +462,7 @@ verify_token (HANDLE token, cygsid &usersid, user_groups &groups, bool *pintern)
+       if (!NT_SUCCESS (status))
+ 	debug_printf ("NtQueryInformationToken(), %y", status);
+       else
+-	*pintern = intern = !memcmp (ts.SourceName, "Cygwin.1", 8);
++	*pintern = intern = !memcmp (ts.SourceName, "MSYS.2", 6);
+     }
+   /* Verify usersid */
+   cygsid tok_usersid (NO_SID);
+@@ -747,7 +747,7 @@ s4uauth (bool logon, PCWSTR domain, PCWSTR user, NTSTATUS &ret_status)
+     {
+       /* Register as logon process. */
+       debug_printf ("Impersonation requested");
+-      RtlInitAnsiString (&name, "Cygwin");
++      RtlInitAnsiString (&name, "MSYS");
+       status = LsaRegisterLogonProcess (&name, &lsa_hdl, &sec_mode);
+     }
+   else
+@@ -786,11 +786,11 @@ s4uauth (bool logon, PCWSTR domain, PCWSTR user, NTSTATUS &ret_status)
+     }
+ 
+   /* Create origin. */
+-  stpcpy (origin.buf, "Cygwin");
++  stpcpy (origin.buf, "MSYS");
+   RtlInitAnsiString (&origin.str, origin.buf);
+ 
+   /* Create token source. */
+-  memcpy (ts.SourceName, "Cygwin.1", 8);
++  memcpy (ts.SourceName, "MSYS.2", 6);
+   ts.SourceIdentifier.HighPart = 0;
+   ts.SourceIdentifier.LowPart = kerberos_auth ? 0x0105 : 0x0106;
+ 
+diff --git a/winsup/cygwin/syscalls.cc b/winsup/cygwin/syscalls.cc
+index 2f11654b1..32959229b 100644
+--- a/winsup/cygwin/syscalls.cc
++++ b/winsup/cygwin/syscalls.cc
+@@ -339,7 +339,7 @@ try_to_bin (path_conv &pc, HANDLE &fh, ACCESS_MASK access, ULONG flags)
+     }
+   else
+     {
+-      /* Create unique filename.  Start with a dot, followed by "cyg"
++      /* Create unique filename.  Start with a dot, followed by "msys"
+ 	 transposed to the Unicode private use area in the U+f700 area
+ 	 on file systems supporting Unicode (except Samba), followed by
+ 	 the inode number in hex, followed by a path hash in hex.  The
+@@ -347,7 +347,7 @@ try_to_bin (path_conv &pc, HANDLE &fh, ACCESS_MASK access, ULONG flags)
+       RtlAppendUnicodeToString (&recycler,
+ 				(pc.fs_flags () & FILE_UNICODE_ON_DISK
+ 				 && !pc.fs_is_samba ())
+-				? L".\xf763\xf779\xf767" : L".cyg");
++				? L".\xf76d\xf773\xf779\xf773" : L".msys");
+       pfii = (PFILE_INTERNAL_INFORMATION) infobuf;
+       status = NtQueryInformationFile (fh, &io, pfii, sizeof *pfii,
+ 				       FileInternalInformation);
+diff --git a/winsup/cygwin/syslog.cc b/winsup/cygwin/syslog.cc
+index 6a295501f..431f9d239 100644
+--- a/winsup/cygwin/syslog.cc
++++ b/winsup/cygwin/syslog.cc
+@@ -26,7 +26,11 @@ details. */
+ #include "cygtls.h"
+ #include "tls_pbuf.h"
+ 
++#ifdef __MSYS__
++#define CYGWIN_LOG_NAME L"MSYS"
++#else
+ #define CYGWIN_LOG_NAME L"Cygwin"
++#endif
+ 
+ static struct
+ {
+diff --git a/winsup/utils/mingw/cygcheck.cc b/winsup/utils/mingw/cygcheck.cc
+index 89a08e560..9117e068e 100644
+--- a/winsup/utils/mingw/cygcheck.cc
++++ b/winsup/utils/mingw/cygcheck.cc
+@@ -95,6 +95,7 @@ static const char *known_env_vars[] = {
+   "c_include_path",
+   "compiler_path",
+   "cxx_include_path",
++  "msys",
+   "cygwin",
+   "cygwin32",
+   "dejagnu",
+@@ -554,7 +555,7 @@ struct ImpDirectory
+ 
+ static bool track_down (const char *file, const char *suffix, int lvl);
+ 
+-#define CYGPREFIX (sizeof ("%%% Cygwin ") - 1)
++#define CYGPREFIX (sizeof ("%%% Msys ") - 1)
+ static void
+ cygwin_info (HANDLE h)
+ {
+@@ -586,7 +587,7 @@ cygwin_info (HANDLE h)
+   while (buf < bufend)
+     if ((buf = (char *) memchr (buf, '%', bufend - buf)) == NULL)
+       break;
+-    else if (strncmp ("%%% Cygwin ", buf, CYGPREFIX) != 0)
++    else if (strncmp ("%%% Msys ", buf, CYGPREFIX) != 0)
+       buf++;
+     else
+       {
+@@ -1027,7 +1028,7 @@ scan_registry (RegInfo * prev, HKEY hKey, char *name, int cygwin, bool wow64)
+ 
+   char *cp;
+   for (cp = name; *cp; cp++)
+-    if (strncasecmp (cp, "Cygwin", 6) == 0)
++    if (strncasecmp (cp, "Msys", 4) == 0)
+       cygwin = 1;
+ 
+   DWORD num_subkeys, max_subkey_len, num_values;
+@@ -1309,7 +1310,7 @@ handle_reg_installation (handle_reg_t what)
+     printf ("Cygwin installations found in the registry:\n");
+   for (int i = 0; i < 2; ++i)
+     if (RegOpenKeyEx (i ? HKEY_CURRENT_USER : HKEY_LOCAL_MACHINE,
+-		      "SOFTWARE\\Cygwin\\Installations", 0,
++		      "SOFTWARE\\Msys\\Installations", 0,
+ 		      what == DELETE_KEY ? KEY_READ | KEY_WRITE : KEY_READ,
+ 		      &key)
+ 	== ERROR_SUCCESS)
+@@ -1785,7 +1786,7 @@ dump_sysinfo ()
+   if (registry)
+     {
+       if (givehelp)
+-	printf ("Scanning registry for keys with 'Cygwin' in them...\n");
++	printf ("Scanning registry for keys with 'Msys' in them...\n");
+       scan_registry (0, HKEY_CURRENT_USER,
+ 		     (char *) "HKEY_CURRENT_USER", 0, false);
+       scan_registry (0, HKEY_LOCAL_MACHINE,
+-- 
+2.52.0.windows.1
+
