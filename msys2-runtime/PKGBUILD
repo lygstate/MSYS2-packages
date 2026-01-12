@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.6.5
-pkgrel=5
+pkgrel=6
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('x86_64')
 url="https://www.cygwin.com/"
@@ -75,7 +75,8 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0043-Cygwin-termios-Change-argument-of-fhandler_termios-s.patch
         0044-Cygwin-termios-Handle-app-execution-alias-in-is_cons.patch
         0045-Support-for-both-cygwin-and-msys2.patch
-        0046-switch-to-cygwin-dll-name.patch)
+        0046-switch-to-cygwin-dll-name.patch
+        0047-Namedpipe-still-use-msys-prefix-first-before-dll-nam.patch)
 sha256sums=('a47fbb6b35c13af8cb95e518a66316615a0e1bade268a42b5cd813cbe247178e'
             '2445352886ffa31505a6df80276795113d580f3c3c32ae293d866573402f7339'
             'bae2d143778f820633d7716608ddf47fab7305f65b7a97fa159ef9b6b8ece20b'
@@ -123,7 +124,8 @@ sha256sums=('a47fbb6b35c13af8cb95e518a66316615a0e1bade268a42b5cd813cbe247178e'
             'd00246819e543e843b009ad98250a947af0acd8c06f90779ee727b5dd1e2a3e9'
             'b803501a22cf51979f5800a9f37b86c5112e5b27c96d0ef12429b0fac1fe44a1'
             '4f0e23ddaabb34f86723f58eaec0c552ccfb4f2f742ba487f6529330a3e52e46'
-            '861d408edfc1ca8496dc96d5ce1e73c8ced6c0e91f5f49733e7039c0213986c5')
+            '861d408edfc1ca8496dc96d5ce1e73c8ced6c0e91f5f49733e7039c0213986c5'
+            '53257cab0b7266cb6c57f493531952fdaf7fae934a37494232d17e65a9964349')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -207,7 +209,8 @@ prepare() {
   0043-Cygwin-termios-Change-argument-of-fhandler_termios-s.patch \
   0044-Cygwin-termios-Handle-app-execution-alias-in-is_cons.patch \
   0045-Support-for-both-cygwin-and-msys2.patch \
-  0046-switch-to-cygwin-dll-name.patch
+  0046-switch-to-cygwin-dll-name.patch \
+  0047-Namedpipe-still-use-msys-prefix-first-before-dll-nam.patch
 }
 
 build() {
