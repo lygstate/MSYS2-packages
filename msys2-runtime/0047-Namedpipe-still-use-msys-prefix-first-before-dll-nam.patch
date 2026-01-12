@@ -1,0 +1,148 @@
+From c2b3b5bcac6ceb3afff9564f424057db190f4aa7 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Mon, 5 Jan 2026 11:10:56 +0800
+Subject: [PATCH 47/N] Namedpipe still use msys- prefix first before dll name
+ changed to cygwin1
+
+---
+ winsup/cygserver/transport_pipes.h |  4 ++++
+ winsup/cygwin/dtable.cc            |  6 ++++++
+ winsup/cygwin/fhandler/pipe.cc     |  4 ++++
+ winsup/cygwin/fhandler/pty.cc      | 26 ++++++++++++++++++++++++++
+ 4 files changed, 40 insertions(+)
+
+diff --git a/winsup/cygserver/transport_pipes.h b/winsup/cygserver/transport_pipes.h
+index e101623d2..66272bc86 100644
+--- a/winsup/cygserver/transport_pipes.h
++++ b/winsup/cygserver/transport_pipes.h
+@@ -11,7 +11,11 @@ details. */
+ #ifndef _TRANSPORT_PIPES_H
+ #define _TRANSPORT_PIPES_H
+ 
++#ifdef __MSYS__
++#define PIPE_NAME_PREFIX	L"\\\\.\\pipe\\msys-"
++#else
+ #define PIPE_NAME_PREFIX	L"\\\\.\\pipe\\cygwin-"
++#endif
+ #define PIPE_NAME_SUFFIX	L"-lpc"
+ 
+ /* Named pipes based transport, for security on NT */
+diff --git a/winsup/cygwin/dtable.cc b/winsup/cygwin/dtable.cc
+index 7303f7eac..6ccc19a71 100644
+--- a/winsup/cygwin/dtable.cc
++++ b/winsup/cygwin/dtable.cc
+@@ -997,9 +997,15 @@ handle_to_fn (HANDLE h, char *posix_fn)
+       if (wcsncasecmp (w32, DEV_NAMED_PIPE, DEV_NAMED_PIPE_LEN) == 0)
+ 	{
+ 	  w32 += DEV_NAMED_PIPE_LEN;
++#ifdef __MSYS__
++	  if (wcsncmp (w32, L"msys-", WCLEN (L"msys-")) != 0)
++	    return false;
++	  w32 += WCLEN (L"msys-");
++#else
+ 	  if (wcsncmp (w32, L"cygwin-", WCLEN (L"cygwin-")) != 0)
+ 	    return false;
+ 	  w32 += WCLEN (L"cygwin-");
++#endif
+ 	  /* Check for installation key and trailing dash. */
+ 	  w32len = cygheap->installation_key.Length / sizeof (WCHAR);
+ 	  if (w32len
+diff --git a/winsup/cygwin/fhandler/pipe.cc b/winsup/cygwin/fhandler/pipe.cc
+index 2ff5dfa2f..11ef78c73 100644
+--- a/winsup/cygwin/fhandler/pipe.cc
++++ b/winsup/cygwin/fhandler/pipe.cc
+@@ -798,7 +798,11 @@ fhandler_pipe::close (int flag)
+   return ret;
+ }
+ 
++#ifdef __MSYS__
++#define PIPE_INTRO "\\\\.\\pipe\\msys-"
++#else
+ #define PIPE_INTRO "\\\\.\\pipe\\cygwin-"
++#endif
+ 
+ /* Create a pipe, and return handles to the read and write ends,
+    just like CreatePipe, but ensure that the write end permits
+diff --git a/winsup/cygwin/fhandler/pty.cc b/winsup/cygwin/fhandler/pty.cc
+index 468bc3bc3..d97e604e9 100644
+--- a/winsup/cygwin/fhandler/pty.cc
++++ b/winsup/cygwin/fhandler/pty.cc
+@@ -879,7 +879,11 @@ fhandler_pty_slave::open (int flags, mode_t)
+       pipe_reply repl;
+       DWORD len;
+ 
++#ifdef __MSYS__
++      __small_sprintf (buf, "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+       __small_sprintf (buf, "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 		       &cygheap->installation_key, get_minor ());
+       termios_printf ("dup handles via master control pipe %s", buf);
+       if (!CallNamedPipe (buf, &req, sizeof req, &repl, sizeof repl,
+@@ -1141,7 +1145,11 @@ fhandler_pty_slave::reset_switch_to_nat_pipe (void)
+ 		    {
+ 		      char pipe[MAX_PATH];
+ 		      __small_sprintf (pipe,
++#ifdef __MSYS__
++			       "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+ 			       "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 			       &cygheap->installation_key, get_minor ());
+ 		      pipe_request req = { GET_HANDLES, GetCurrentProcessId () };
+ 		      pipe_reply repl;
+@@ -1602,9 +1610,15 @@ fhandler_pty_slave::tcflush (int queue)
+   if (queue == TCIFLUSH || queue == TCIOFLUSH)
+     {
+       char pipe[MAX_PATH];
++#ifdef __MSYS__
++      __small_sprintf (pipe,
++		       "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++		       &cygheap->installation_key, get_minor ());
++#else
+       __small_sprintf (pipe,
+ 		       "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
+ 		       &cygheap->installation_key, get_minor ());
++#endif
+       pipe_request req = { FLUSH_INPUT, GetCurrentProcessId () };
+       pipe_reply repl;
+       DWORD n;
+@@ -2036,7 +2050,11 @@ fhandler_pty_master::close (int flag)
+ 	  pipe_reply repl;
+ 	  DWORD len;
+ 
++#ifdef __MSYS__
++	  __small_sprintf (buf, "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+ 	  __small_sprintf (buf, "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 			   &cygheap->installation_key, get_minor ());
+ 	  acquire_output_mutex (mutex_timeout);
+ 	  if (master_ctl)
+@@ -2946,7 +2964,11 @@ fhandler_pty_master::setup ()
+ 
+   /* Create master control pipe which allows the master to duplicate
+      the pty pipe handles to processes which deserve it. */
++#ifdef __MSYS__
++  __small_sprintf (buf, "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+   __small_sprintf (buf, "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 		   &cygheap->installation_key, unit);
+   master_ctl = CreateNamedPipe (buf, PIPE_ACCESS_DUPLEX
+ 				     | FILE_FLAG_FIRST_PIPE_INSTANCE,
+@@ -3836,7 +3858,11 @@ fhandler_pty_slave::transfer_input (tty::xfer_dir dir, HANDLE from, tty *ttyp,
+     {
+       char pipe[MAX_PATH];
+       __small_sprintf (pipe,
++#ifdef __MSYS__
++		       "\\\\.\\pipe\\msys-%S-pty%d-master-ctl",
++#else
+ 		       "\\\\.\\pipe\\cygwin-%S-pty%d-master-ctl",
++#endif
+ 		       &cygheap->installation_key, ttyp->get_minor ());
+       pipe_request req = { GET_HANDLES, GetCurrentProcessId () };
+       pipe_reply repl;
+-- 
+2.52.0.windows.1
+
