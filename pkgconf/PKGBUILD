@@ -2,7 +2,7 @@
 
 pkgname=pkgconf
 pkgver=2.5.1
-pkgrel=1
+pkgrel=2
 pkgdesc='pkg-config compatible utility which does not depend on glib'
 url='https://github.com/pkgconf/pkgconf'
 msys2_repository_url='https://github.com/pkgconf/pkgconf'
