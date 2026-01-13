@@ -1,6 +1,18 @@
-diff -up a/src/chartype.h b/src/chartype.h
---- a/src/chartype.h	2022-06-11 09:57:59.000000000 +0200
-+++ b/src/chartype.h	2023-01-20 21:42:39.530718100 +0100
+From de546f77655c8e4459b6eb5d5ea0e71a65e1a2e4 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Tue, 13 Jan 2026 16:38:16 +0800
+Subject: [PATCH 1/2] fixes for cygwin build
+
+---
+ src/chartype.h          | 2 +-
+ src/editline/readline.h | 2 +-
+ src/sys.h               | 4 ++++
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/chartype.h b/src/chartype.h
+index bcdb293..e3c7583 100644
+--- a/src/chartype.h
++++ b/src/chartype.h
 @@ -51,7 +51,7 @@
  /* Oh for a <uchar.h> with char32_t and __STDC_UTF_32__ in it...
   * ref: ISO/IEC DTR 19769
@@ -10,10 +22,11 @@ diff -up a/src/chartype.h b/src/chartype.h
  #warning Build environment does not support non-BMP characters
  #endif
  
-diff -up a/src/editline/readline.h b/src/editline/readline.h
---- a/src/editline/readline.h	2022-06-11 09:57:59.000000000 +0200
-+++ b/src/editline/readline.h	2023-01-20 21:42:50.567947600 +0100
-@@ -77,7 +77,7 @@ typedef KEYMAP_ENTRY *Keymap;
+diff --git a/src/editline/readline.h b/src/editline/readline.h
+index 03e2d2e..f685546 100644
+--- a/src/editline/readline.h
++++ b/src/editline/readline.h
+@@ -78,7 +78,7 @@ typedef KEYMAP_ENTRY *Keymap;
  
  #ifndef CTRL
  #include <sys/ioctl.h>
@@ -22,9 +35,10 @@ diff -up a/src/editline/readline.h b/src/editline/readline.h
  #include <sys/ttydefaults.h>
  #endif
  #ifndef CTRL
-diff -up a/src/sys.h b/src/sys.h
---- a/src/sys.h	2022-10-30 06:35:40.000000000 +0100
-+++ b/src/sys.h	2023-01-20 21:43:19.440199500 +0100
+diff --git a/src/sys.h b/src/sys.h
+index 0511bad..f635479 100644
+--- a/src/sys.h
++++ b/src/sys.h
 @@ -63,7 +63,11 @@
  #endif
  
@@ -37,3 +51,6 @@ diff -up a/src/sys.h b/src/sys.h
  
  #ifndef __arraycount
  # define __arraycount(a) (sizeof(a) / sizeof(*(a)))
+-- 
+2.52.0.windows.1
+
