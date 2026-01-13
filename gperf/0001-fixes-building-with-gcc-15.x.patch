@@ -1,0 +1,41 @@
+From 5572b1bcd5182201ff0b3d65b8d28e965aa227ed Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Wed, 14 Jan 2026 00:38:09 +0800
+Subject: [PATCH] fixes building with gcc 15.x
+
+---
+ lib/getopt.c | 4 ++--
+ lib/getopt.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/getopt.c b/lib/getopt.c
+index b95002a..b639660 100644
+--- a/lib/getopt.c
++++ b/lib/getopt.c
+@@ -194,8 +194,8 @@ static char *posixly_correct;
+ /* Avoid depending on library functions or files
+    whose names are inconsistent.  */
+ 
+-extern char *getenv ();
+-extern int strncmp ();
++extern char *getenv (const char*);
++extern int strncmp (const char * str1, const char * str2, size_t num);
+ 
+ static char *
+ my_index (const char *str, int chr)
+diff --git a/lib/getopt.h b/lib/getopt.h
+index 6f01fc6..839236c 100644
+--- a/lib/getopt.h
++++ b/lib/getopt.h
+@@ -102,7 +102,7 @@ struct option
+    errors, only prototype getopt for the GNU C library.  */
+ extern int getopt (int argc, char *const *argv, const char *shortopts);
+ #else /* not __GNU_LIBRARY__ */
+-extern int getopt ();
++extern int getopt (int argc, char *const *argv, const char *shortopts);
+ #endif /* __GNU_LIBRARY__ */
+ #endif /* __cplusplus */
+ extern int getopt_long (int argc, char *const *argv, const char *shortopts,
+-- 
+2.52.0.windows.1
+
