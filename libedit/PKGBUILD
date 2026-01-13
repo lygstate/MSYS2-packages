@@ -15,19 +15,19 @@ depends=('ncurses' 'sh')
 makedepends=('ncurses-devel' 'autotools' 'gcc')
 options=('staticlibs')
 source=(https://www.thrysoee.dk/editline/${pkgname}-${_snap_date}-${_base_ver}.tar.gz
-        libedit-20191231-3.1.patch
-        cygwin-build.patch)
+        0001-fixes-for-cygwin-build.patch
+        0002-fixes-compiling-with-gcc-15-by-use-wchar_t.patch)
 sha256sums=('5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f'
-            '858f123a0844bb16903014a9b3e7dd4668654931a07ca8a9a4d1a8a3572863b0'
-            'b04f81f22bd5601c3df54dcdc7f79c5a25a7a8563336238129ac7bba123ed2a3')
+            '123df196441979f439f56c2a5cf6bc020cfc937dfeee0cda06d3bf8346c910bb'
+            '18e9ebd3dc174ab50b0f32e40bfa2b2ed754fa53669c836efd351bd418c3c8cd')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${_snap_date}-${_base_ver}"
 
-  patch -p1 -i ${srcdir}/cygwin-build.patch
+  patch -p1 -i ${srcdir}/0001-fixes-for-cygwin-build.patch
 
   # https://github.com/msys2/MSYS2-packages/pull/2241
-  patch -p1 -i ${srcdir}/libedit-20191231-3.1.patch
+  patch -p1 -i ${srcdir}/0002-fixes-compiling-with-gcc-15-by-use-wchar_t.patch
 
   autoreconf -fi
 }
