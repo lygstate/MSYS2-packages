@@ -3,7 +3,7 @@
 pkgname=("util-linux" "libutil-linux" "libutil-linux-devel")
 _pkgmajor=2.40
 pkgver=${_pkgmajor}.2
-pkgrel=2
+pkgrel=3
 pkgdesc="Miscellaneous system utilities for Linux"
 arch=('i686' 'x86_64')
 license=('spdx:GPL-2.0-or-later')
