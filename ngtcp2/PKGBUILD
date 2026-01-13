@@ -3,7 +3,7 @@
 pkgbase=ngtcp2
 pkgname=("libngtcp2" "libngtcp2-devel")
 pkgver=1.22.0
-pkgrel=1
+pkgrel=2
 pkgdesc="An effort to implement IETF QUIC protocol"
 arch=(i686 x86_64)
 url='https://nghttp2.org/ngtcp2'
@@ -56,7 +56,7 @@ package_libngtcp2() {
   DESTDIR="${pkgdir}" cmake --install .
 
   # Remove on the next update
-  cp "${pkgdir}/usr/bin/msys-ngtcp2_crypto_ossl-0.dll" "${pkgdir}/usr/bin/msys-ngtcp2_crypto_ossl.dll"
+  cp "${pkgdir}/usr/bin/cygngtcp2_crypto_ossl-0.dll" "${pkgdir}/usr/bin/cygngtcp2_crypto_ossl.dll"
 
   rm -rf "${pkgdir}/usr/include"
   rm -rf "${pkgdir}/usr/lib"
