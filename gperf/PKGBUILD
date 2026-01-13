@@ -9,15 +9,18 @@ url="https://www.gnu.org/software/gperf/"
 license=('spdx:GPL-3.0-or-later')
 depends=('gcc-libs' 'info')
 makedepends=('gcc' 'texinfo' 'autotools')
-source=("https://ftp.gnu.org/pub/gnu/gperf/${pkgname}-${pkgver}.tar.gz"{,.sig})
+source=("https://ftp.gnu.org/pub/gnu/gperf/${pkgname}-${pkgver}.tar.gz"{,.sig}
+        0001-fixes-building-with-gcc-15.x.patch)
 sha256sums=('588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2'
-            'SKIP')
+            'SKIP'
+            '3eb11a4b170b8a222af5c631a3319a0deab5e11d5805aeb33741092fabf242f3')
 options=('!makeflags')
 validpgpkeys=('93C08C88471097CD'
 'EDEB87A500CC0A211677FBFD93C08C88471097CD')
 
 prepare() {
   cd "${srcdir}"/${pkgname}-${pkgver}
+  patch -p1 -i "${srcdir}/0001-fixes-building-with-gcc-15.x.patch"
 }
 
 build() {
