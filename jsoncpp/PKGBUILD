@@ -18,8 +18,22 @@ makedepends=("gcc"
              "meson"
              "pkgconf"
              "ninja")
-source=(${pkgname}-${pkgver}.tar.gz::"https://github.com/open-source-parsers/jsoncpp/archive/${pkgver}.tar.gz")
-sha256sums=('f93b6dd7ce796b13d02c108bc9f79812245a82e577581c4c9aabe57075c90ea2')
+source=(${pkgname}-${pkgver}.tar.gz::"https://github.com/open-source-parsers/jsoncpp/archive/${pkgver}.tar.gz"
+        1570.patch # patch from https://github.com/open-source-parsers/jsoncpp/pull/1570
+        0001-Add-IMPORTED_IMPLIB-for-windows-and-cygwin.patch
+)
+sha256sums=('f93b6dd7ce796b13d02c108bc9f79812245a82e577581c4c9aabe57075c90ea2'
+            'ea17dae807813eb605ebe65e3d6c3e03283f1b9932cba21c4763dbed440a5098'
+            'b51cf09dcb0d1b41ca92095d7a80b4b81435c5de8b1edfcdfca5876f4cc2aeb8')
+
+prepare() {
+  pushd "${srcdir}/${pkgbase}-${pkgver}"
+
+  patch -p1 -i ${srcdir}/1570.patch
+  patch -p1 -i ${srcdir}/0001-Add-IMPORTED_IMPLIB-for-windows-and-cygwin.patch
+
+  popd
+}
 
 build() {
   [[ -d "${srcdir}/build-${CARCH}-static" ]] && rm -rf "${srcdir}/build-${CARCH}-static"
