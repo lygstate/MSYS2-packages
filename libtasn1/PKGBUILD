@@ -14,13 +14,17 @@ msys2_references=(
   "cpe: cpe:/a:gnu:libtasn1"
 )
 makedepends=('gcc' 'patch' 'gtk-doc' 'autotools')
-source=(https://ftp.gnu.org/gnu/libtasn1/${pkgname}-${pkgver}.tar.gz{,.sig})
+source=(https://ftp.gnu.org/gnu/libtasn1/${pkgname}-${pkgver}.tar.gz{,.sig}
+        0001-bump-gnulib-for-compile-with-gcc-15.x.patch)
 sha256sums=('92e0e3bd4c02d4aeee76036b2ddd83f0c732ba4cda5cb71d583272b23587a76c'
-            'SKIP')
+            'SKIP'
+            'e82934da04ebe6be73254e4dc56704bc594beebe45194a7f700db1354b00469d')
 validpgpkeys=('B1D2BD1375BECB784CF4F8C4D73CF638C53C06BE') # Simon Josefsson <simon@josefsson.org>
 
 prepare() {
   cd ${pkgname}-${pkgver}
+  patch -p1 -i "${srcdir}/0001-bump-gnulib-for-compile-with-gcc-15.x.patch"
+
   autoreconf -fiv
 }
 
