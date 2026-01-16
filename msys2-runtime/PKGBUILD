@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.6.7
-pkgrel=3
+pkgrel=6
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('x86_64')
 url="https://www.cygwin.com/"
@@ -81,7 +81,7 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0049-Rename-dll-from-cygwin-to-msys.patch
         0050-Fix-msys-library-name-in-import-libraries.patch)
 sha256sums=('4acc146baed79e6a4594bebf562125d4d6f66c9d1f53f89a1e47d156799508dc'
-            '5206e01f9a8b88b937bdea79f7a0eefd238ec0a9984b7f0dca28015085e091e0'
+            '85048b4a5729b60d08b2b286f70f574a981ee4eb66d52f6aebc3ba39418202c3'
             'd3c997a88bef74e70c7b394ee5c4f63ea758784325809b665724aa521f0fbd70'
             '8b366b9e4925108369e9bd3ea9daaac1903db6599e5586629663e7db2699d406'
             'eb3e71319aa1f0d02c398c4f3ce392a49d1600e89e64782021d732a1eda857ba'
@@ -217,9 +217,7 @@ prepare() {
   0045-Support-for-both-cygwin-and-msys2.patch \
   0046-Support-for-both-MSYS-and-CYGWIN-environment-variabl.patch \
   0047-strace.cc-Don-t-set-CYGWIN-noglob.patch \
-  0048-Convert-to-use-msys-style-named-pipe.patch \
-  0049-Rename-dll-from-cygwin-to-msys.patch \
-  0050-Fix-msys-library-name-in-import-libraries.patch
+  0048-Convert-to-use-msys-style-named-pipe.patch
 }
 
 build() {
@@ -251,15 +249,35 @@ build() {
     --sysconfdir=/etc \
     "${extra_config[@]}"
   LC_ALL=C make
+
+  cp -af /usr/lib/libmsys-2.0.a /usr/lib/libmsys-2.0.a.origin
+  cp -af /usr/lib/libcygwin.a /usr/lib/libcygwin.a.origin
+  cp -af /usr/lib/libg.a /usr/lib/libg.a.origin
+  cp -af /usr/lib/crt0.o /usr/lib/crt0.o.origin
+  cp -f ./x86_64-pc-cygwin/winsup/cygwin/libcygwin.a /usr/lib/libmsys-2.0.a
+  cp -f ./x86_64-pc-cygwin/winsup/cygwin/libcygwin.a /usr/lib/libcygwin.a
+  cp -f ./x86_64-pc-cygwin/winsup/cygwin/libcygwin.a /usr/lib/libg.a
+  cp -f ./x86_64-pc-cygwin/winsup/cygwin/crt0.o /usr/lib/crt0.o
+  cp -f ./x86_64-pc-cygwin/winsup/cygwin/gcrt0.o /usr/lib/gcrt0.o
+  find | grep \\.exe$ | xargs -I ARG rm -f ARG
+
+  LC_ALL=C make
+
   LC_ALL=C make -j1 DESTDIR="${srcdir}"/dest install
+
+  cp -af /usr/lib/libmsys-2.0.a.origin /usr/lib/libmsys-2.0.a
+  cp -af /usr/lib/libcygwin.a.origin /usr/lib/libcygwin.a
+  cp -af /usr/lib/libg.a.origin /usr/lib/libg.a
+  cp -af /usr/lib/crt0.o.origin /usr/lib/crt0.o
+  rm /usr/lib/*.origin
 
   rm -rf "${srcdir}"/dest/etc
 
-  # split debug info from msys-2.0.dll
+  # split debug info from cygwin1.dll
   cd "${srcdir}"/dest
-  objcopy --add-gnu-debuglink=/dev/null --only-keep-debug usr/bin/msys-2.0.dll usr/bin/msys-2.0.dbg
-  objcopy -g --add-gnu-debuglink=usr/bin/msys-2.0.dbg usr/bin/msys-2.0.dll usr/bin/msys-2.0.dll.new
-  mv -f usr/bin/msys-2.0.dll.new usr/bin/msys-2.0.dll
+  objcopy --add-gnu-debuglink=/dev/null --only-keep-debug usr/bin/cygwin1.dll usr/bin/cygwin1.dbg
+  objcopy -g --add-gnu-debuglink=usr/bin/cygwin1.dbg usr/bin/cygwin1.dll usr/bin/cygwin1.dll.new
+  mv -f usr/bin/cygwin1.dll.new usr/bin/cygwin1.dll
 }
 
 package_msys2-runtime() {
@@ -270,10 +288,7 @@ package_msys2-runtime() {
   mkdir -p "${pkgdir}"/usr
   cp -rf "${srcdir}"/dest/usr/bin "${pkgdir}"/usr/
   cp -rf "${srcdir}"/dest/usr/libexec "${pkgdir}"/usr/
-  rm -f "${pkgdir}"/usr/bin/msys-2.0.dbg
-  rm -f "${pkgdir}"/usr/bin/cyglsa-config
-  rm -f "${pkgdir}"/usr/bin/cyglsa.dll
-  rm -f "${pkgdir}"/usr/bin/cyglsa64.dll
+  rm -f "${pkgdir}"/usr/bin/cygwin1.dbg
   rm -f "${pkgdir}"/usr/bin/cygserver-config
   cp -rf "${srcdir}"/dest/usr/share "${pkgdir}"/usr/
 }
@@ -287,7 +302,8 @@ package_msys2-runtime-devel() {
   options=('!strip')
 
   mkdir -p "${pkgdir}"/usr/bin
-  cp -f "${srcdir}"/dest/usr/bin/msys-2.0.dbg "${pkgdir}"/usr/bin/
+  cp -f "${srcdir}"/dest/usr/bin/cygwin1.dbg "${pkgdir}"/usr/bin/
+  cp -f "${srcdir}"/dest/usr/bin/cygserver-config "${pkgdir}"/usr/bin/
   cp -rLf "${srcdir}"/dest/usr/${CHOST}/include "${pkgdir}"/usr/
   rm -f "${pkgdir}"/usr/include/iconv.h
   rm -f "${pkgdir}"/usr/include/unctrl.h
@@ -296,6 +312,6 @@ package_msys2-runtime-devel() {
 
   cp -rLf "${srcdir}"/dest/usr/${CHOST}/lib "${pkgdir}"/usr/
 
-  # compatibility with Cygwin toolchains
-  cp "${srcdir}"/dest/usr/${CHOST}/lib/libmsys-2.0.a "${pkgdir}"/usr/lib/libcygwin.a
+  # compatibility with Msys2 toolchains for bootstrap
+  cp "${srcdir}"/dest/usr/${CHOST}/lib/libcygwin.a "${pkgdir}"/usr/lib/libmsys-2.0.a
 }
