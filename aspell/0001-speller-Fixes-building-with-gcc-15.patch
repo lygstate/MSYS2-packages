@@ -1,0 +1,26 @@
+From 10a1cfdba73c3bd2c7a8891f223943b12107073f Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Sun, 18 Jan 2026 02:52:00 +0800
+Subject: [PATCH] speller: Fixes building with gcc 15
+
+Signed-off-by: Yonggang Luo <luoyonggang@gmail.com>
+---
+ modules/speller/default/vector_hash-t.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/speller/default/vector_hash-t.hpp b/modules/speller/default/vector_hash-t.hpp
+index 969a80c..b3bfeb6 100644
+--- a/modules/speller/default/vector_hash-t.hpp
++++ b/modules/speller/default/vector_hash-t.hpp
+@@ -183,7 +183,7 @@ namespace aspeller {
+   template<class Parms>
+   void VectorHashTable<Parms>::recalc_size() {
+     size_ = 0;
+-    for (iterator i = begin(); i != this->e; ++i, ++this->_size);
++    for (iterator i = begin(); i != this->end(); ++i, ++size_);
+   }
+ 
+ }
+-- 
+2.52.0.windows.1
+
