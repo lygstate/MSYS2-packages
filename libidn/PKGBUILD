@@ -13,11 +13,17 @@ arch=('i686' 'x86_64')
 license=('GPL3' 'LGPL')
 makedepends=('gcc' 'texinfo' 'autotools' 'gettext-devel' 'gtk-doc' 'gperf')
 options=('!libtool' 'staticlibs')
-source=(https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz)
-sha256sums=('bdc662c12d041b2539d0e638f3a6e741130cdb33a644ef3496963a443482d164')
+source=(
+  https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz
+  0001-fixes-building-with-gcc-15.x-under-cygwin-by-udpate-.patch
+)
+sha256sums=('bdc662c12d041b2539d0e638f3a6e741130cdb33a644ef3496963a443482d164'
+            '53d0206a960a0b96a8896b504cee893960cfb2f0e50bbab92ee9938d6ff55d53')
 
 prepare() {
   cd ${srcdir}/${pkgname}-${pkgver}
+
+  patch -p1 -i "${srcdir}/0001-fixes-building-with-gcc-15.x-under-cygwin-by-udpate-.patch"
 
   autoreconf -ivf
 
@@ -32,6 +38,7 @@ build() {
   cd ${srcdir}/build-${CHOST}
 
   export MSYSTEM=CYGWIN
+  CFLAGS="$CFLAGS -std=gnu17" \
   ../${pkgname}-${pkgver}/configure \
     --prefix=/usr \
     --build=${CHOST} \
