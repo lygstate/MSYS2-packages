@@ -2,18 +2,19 @@
 
 pkgname=grml-zsh-config
 pkgver=0.19.26
-pkgrel=1
+pkgrel=2
 pkgdesc="grml's zsh setup"
 arch=('any')
 url='https://grml.org/zsh/'
 license=('GPL2')
 provides=('grmlzshrc')
-depends=('zsh' 'coreutils' 'grep' 'sed' 'procps-ng')
+depends=('zsh' 'coreutils' 'grep' 'sed' 'procps-ng' 'ruby')
 makedepends=('txt2tags')
 source=("https://deb.grml.org/pool/main/g/grml-etc-core/grml-etc-core_${pkgver}.tar.xz")
 sha256sums=('e3beb1d56f7d5abf20e86a340d0266a83f8cebd637d2a0fe6480b4b475e7f3e1')
 
 build() {
+  gem install asciidoctor --no-user-install
   cd ${srcdir}/grml-etc-core-${pkgver}/doc
   make
 }
