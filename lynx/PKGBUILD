@@ -28,6 +28,7 @@ prepare() {
 build() {
   cd "${srcdir}/${pkgname}${_relver}"
 
+  CFLAGS="$CFLAGS -std=gnu17" \
   ./configure \
     --build=${CHOST} \
     --prefix=/usr \
