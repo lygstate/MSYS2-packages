@@ -17,18 +17,25 @@ depends=("libltdl")
 optdepends=("ctags" "python3-pygments")
 makedepends=("ncurses-devel" 'autotools' 'gperf' 'gcc')
 options=(libtool !emptydirs)
-source=("https://ftp.gnu.org/gnu/global/${pkgname}-${pkgver}.tar.gz"{,.sig})
+source=(
+  "https://ftp.gnu.org/gnu/global/${pkgname}-${pkgver}.tar.gz"{,.sig}
+  0001-Fixes-detecting-of-HAVE_SIGSETJMP-in-cygwin.patch
+)
 sha256sums=('542a5b06840e14eca548b4bb60b44c0adcf01024e68eb362f8bf716007885901'
-            'SKIP')
+            'SKIP'
+            '46de890ef48c98f66f00b7fbed83ee08fa54d36b38ae007145a584dc3a8064c9')
 validpgpkeys=("26F631B43D624A927E6F1C33969C3BE389DDA6EB") # Shigio YAMAGUCHI <shigio@gnu.org>
 
 prepare() {
   cd "${pkgname}-${pkgver}"
+  patch -p1 -i "${srcdir}/0001-Fixes-detecting-of-HAVE_SIGSETJMP-in-cygwin.patch"
   autoreconf -fiv
 }
 
 build () {
   cd "${pkgname}-${pkgver}"
+
+  CFLAGS="$CFLAGS -std=gnu17" \
   ./configure --prefix=/usr \
               --build=${CHOST} \
               --host=${CHOST} \
