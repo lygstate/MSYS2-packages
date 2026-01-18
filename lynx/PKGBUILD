@@ -29,7 +29,7 @@ prepare() {
 build() {
   cd "${srcdir}/${pkgname}${_relver}"
 
-  CFLAGS="$CFLAGS -std=gnu17" \
+  CFLAGS="$CFLAGS -std=gnu17 -Wno-incompatible-pointer-types" \
   ./configure \
     --build=${CHOST} \
     --prefix=/usr \
