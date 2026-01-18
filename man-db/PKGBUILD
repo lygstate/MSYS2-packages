@@ -19,12 +19,33 @@ conflicts=('man')
 provides=('man')
 replaces=('man')
 install=${pkgname}.install
-source=(https://download.savannah.gnu.org/releases/man-db/${pkgname}-${pkgver}.tar.xz{,.asc}
-        convert-mans)
+
+# gnulib stable-202601
+_GIT_COMMIT=2a288c048e2a23ea9cd8cbef9a60aa4ac82bdc3d
+source=(
+  https://download.savannah.gnu.org/releases/man-db/${pkgname}-${pkgver}.tar.xz{,.asc}
+  convert-mans
+  "git+https://https.git.savannah.gnu.org/git/gnulib.git#commit=${_GIT_COMMIT}"
+  update-gnulib.sh
+)
 sha256sums=('8afebb6f7eb6bb8542929458841f5c7e6f240e30c86358c1fbcefbea076c87d9'
             'SKIP'
-            '15c9452984c06335543d9692e25d7825063d39e4d7897a224a36bbbd5e0ffaa8')
+            '15c9452984c06335543d9692e25d7825063d39e4d7897a224a36bbbd5e0ffaa8'
+            '4bed3cd2d8c051642bf02cfa8bc401c8f9f06b030fab5a8149b56b2a134415e0'
+            'c730fc80b9f4df48d39551ec65bb449ebd9b8988cbe86e7f80b0faea0b4d0166')
 validpgpkeys=('AC0A4FF12611B6FCCF01C111393587D97D86500B') # Colin Watson <cjwatson@debian.org>
+
+
+prepare() {
+  cd "${pkgname}-${pkgver}"
+
+  cp ${srcdir}/update-gnulib.sh .
+
+  PATH=${srcdir}/gnulib:$PATH \
+  ./update-gnulib.sh
+
+  autoreconf -f
+}
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
