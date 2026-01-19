@@ -186,18 +186,18 @@ build() {
   CXXFLAGS=${CXXFLAGS/-pipe/}
 
   export lt_cv_deplibs_check_method='pass_all'
-  enable_bootstrap="--disable-bootstrap"
+  enable_bootstrap="--enable-bootstrap"
   if [[ "$MSYS_BOOTSTRAP_STAGE" == "" ]]; then
-    # stage2 gcc linkage to msys, gcc-libs linkage to cygwin without hack
+    # stage2 gcc linkage to cygwin, gcc-libs linkage to cygwin without hack
     enable_bootstrap="--enable-bootstrap"
   elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
-    # stage1 gcc linkage to cygwin, gcc-libs linkage to cygwin
+    # stage1 gcc linkage to cygwin, gcc-libs use the one comes from stage1 that linkage to cygwin
     enable_bootstrap="--disable-bootstrap"
   elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
     # stage0 gcc linkage to msys, gcc-libs linkage to cygwin
-    enable_bootstrap="--disable-bootstrap"
+    enable_bootstrap="--enable-bootstrap"
   else
-    echo "Invalid stage $MSYS_BOOTSTRAP_STAGE"
+    echo "Invalid stage $MSYS_BOOTSTRAP_STAGE for enable_bootstrap"
     exit -1
   fi
   export MSYSTEM=CYGWIN
@@ -241,24 +241,26 @@ build() {
     # stage2 gcc linkage to msys, gcc-libs linkage to cygwin without hack
     make
   elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
-    # stage1 gcc linkage to cygwin, gcc-libs linkage to cygwin
+    # stage1 gcc linkage to cygwin, do not build gcc-libs
     make all-host
     rm -rf ${srcdir}/dest-install
     DESTDIR=${srcdir}/dest-install \
     make -j1 install-host
 
-    srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
-    sh ${srcdir}/../base/gcc-install.sh
+    MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
+    sh ${pkg_root_dir}/build-install/gcc-prepare.sh
 
   elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
     # stage0 gcc linkage to msys, gcc-libs linkage to cygwin
+
+    # First getting gcc/gcc-libs linkage to msys
+    make
+
+    # Then getting gcc-libs linkage to cygwin
     cd ${srcdir}/gcc-${pkgver}
 
     apply_patch_with_msg \
       0021-gcc_libs-linkage-to-_cygwin_dll_entry.patch
-
-    cd ${srcdir}/gcc-${pkgver}/libcpp
-    WANT_AUTOCONF="2.69" autoreconf --force
 
     cd ${srcdir}/gcc-${pkgver}/libatomic
     WANT_AUTOCONF="2.69" autoreconf --force
@@ -276,16 +278,15 @@ build() {
     WANT_AUTOCONF="2.69" autoreconf --force
 
     cd ${srcdir}/build-MSYS
+    echo "Rebuilding the gcc-libs"
 
-    srcdir=${srcdir} \
-    sh ${srcdir}/../base/gcc-build-prep.sh
+    # Gcc libs linkage cygwin dll
+    MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
+    sh ${pkg_root_dir}/build-install/gcc-prepare.sh
 
     make configure-target
     make clean-target
     make
-
-    srcdir=${srcdir} \
-    sh ${srcdir}/../base/gcc-build-post.sh
   else
     echo "Invalid stage $MSYS_BOOTSTRAP_STAGE"
     exit -1
