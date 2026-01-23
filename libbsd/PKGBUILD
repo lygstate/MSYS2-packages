@@ -13,16 +13,16 @@ license=('custom')
 depends=('libmd')
 makedepends=("gcc" "autotools" "make")
 source=("https://libbsd.freedesktop.org/releases/$pkgname-$pkgver.tar.xz"{,.asc}
-        "001-random-hackery.patch")
+        "cygwin-build.patch")
 sha256sums=('b88cc9163d0c652aaf39a99991d974ddba1c3a9711db8f1b5838af2a14731014'
             'SKIP'
-            '231270c2c45ad6f29fbd710cd0d85d55b59f61301d17503847aca0d678346a11')
+            '30f5b5b47a80f4be0da69c1004adb0f49ff2465ed1dc783650ee055978aaf904')
 validpgpkeys=('4F3E74F436050C10F5696574B972BF3EA4AE57A3') # Guillem Jover
 
 prepare() {
   cd "${pkgname}-${pkgver}"
 
-  patch -p1 -i "${srcdir}/001-random-hackery.patch"
+  patch -p1 -i "${srcdir}/cygwin-build.patch"
 
   autoreconf -vfi
 }
