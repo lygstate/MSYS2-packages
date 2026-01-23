@@ -2,7 +2,10 @@
 profile = "dist"
 
 # see src/bootstrap/src/utils/change_tracker.rs
-change-id = 138986
+change-id = 148795
+
+[llvm]
+link-shared = true
 
 [build]
 #cargo = "$MSYS2_ROOT/clang64/bin/cargo.exe"
@@ -13,17 +16,19 @@ description = "Rev$PKGREL, Built by MSYS2 project"
 submodules = false
 build = "x86_64-pc-windows-gnu"
 host = ["x86_64-pc-cygwin"]
-target = [
-  "x86_64-pc-cygwin",
-]
-build-dir = "build-Cygwin"
+target = ["x86_64-pc-cygwin"]
 python = "$MSYS2_ROOT/mingw64/bin/python.exe"
 locked-deps = true
 vendor = true
 tools = [
-"clippy", "rustdoc", "rustfmt", "rust-analyzer-proc-macro-srv", "analysis",
   "cargo",
+  "clippy",
+  "rustdoc",
+  "rustfmt",
+  "rust-analyzer-proc-macro-srv",
+  "analysis"
 ]
+build-dir = "cygwin-bootstrap-12"
 profiler = true
 
 # Generating docs fails with the wasm32-* targets
@@ -32,9 +37,6 @@ docs = false
 [install]
 prefix = "/usr"
 sysconfdir = "/etc"
-
-[llvm]
-link-shared = true
 
 [rust]
 #debug = true
