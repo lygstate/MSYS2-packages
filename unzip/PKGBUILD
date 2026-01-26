@@ -156,5 +156,10 @@ package() {
 
   # install the license file
   install -Dm644 LICENSE ${pkgdir}/usr/share/licenses/unzip/LICENSE
+
+  pushd ${pkgdir}/usr/bin
+  rm -f zipinfo
+  ln -s unzip.exe zipinfo
+  popd
 }
 
