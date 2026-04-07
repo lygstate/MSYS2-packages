@@ -1,0 +1,28 @@
+From 2ea6dbc4b31a9af5043ee48d5e1492f4cd957229 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 10 Apr 2026 03:49:16 +0800
+Subject: [PATCH 51/52] Revert hookapi.cc of "Rename dll from cygwin to msys"
+
+---
+ winsup/cygwin/hookapi.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/winsup/cygwin/hookapi.cc b/winsup/cygwin/hookapi.cc
+index 9f31a716c..ee2edbafe 100644
+--- a/winsup/cygwin/hookapi.cc
++++ b/winsup/cygwin/hookapi.cc
+@@ -379,11 +379,7 @@ hook_or_detect_cygwin (const char *name, const void *fn, WORD& subsys, HANDLE h)
+   for (PIMAGE_IMPORT_DESCRIPTOR pd = pdfirst; pd->FirstThunk; pd++)
+     {
+       if (!ascii_strcasematch (rva (PSTR, map ?: (char *) hm, pd->Name - delta),
+-#ifdef __MSYS__
+-			       "msys-2.0.dll"))
+-#else
+ 			       "cygwin1.dll"))
+-#endif
+ 	continue;
+       if (!fn)
+ 	{
+-- 
+2.52.0.windows.1
+
