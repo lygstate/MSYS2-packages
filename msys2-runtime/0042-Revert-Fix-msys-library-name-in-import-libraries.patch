@@ -1,0 +1,25 @@
+From 682f7cacc127a4a23fa74e464ab50507ef974a00 Mon Sep 17 00:00:00 2001
+From: Yonggang Luo <luoyonggang@gmail.com>
+Date: Fri, 16 Jan 2026 11:53:55 +0800
+Subject: [PATCH 42/51] Revert "Fix msys library name in import libraries"
+
+This reverts commit 595f66b81d8446ab34c4ccbea3408e455bcf0365.
+---
+ winsup/cygwin/scripts/speclib | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/winsup/cygwin/scripts/speclib b/winsup/cygwin/scripts/speclib
+index 42a02c511..41a3a8e13 100755
+--- a/winsup/cygwin/scripts/speclib
++++ b/winsup/cygwin/scripts/speclib
+@@ -38,7 +38,6 @@ while (<$nm_fd>) {
+     study;
+     if (/ I _?(.*)_dll_iname/o) {
+ 	$dllname = $1;
+-	$dllname =~ s/_2_0/-2.0/;
+     } else {
+ 	my ($file, $member, $symbol) = m%^([^:]*):([^:]*(?=:))?.* T (.*)%o;
+ 	next if !defined($symbol) || $symbol =~ $exclude_regex;
+-- 
+2.52.0.windows.1
+
