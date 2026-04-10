@@ -3,7 +3,7 @@
 
 pkgname=scons
 pkgver=4.10.1
-pkgrel=1
+pkgrel=6
 pkgdesc="Extensible Python-based build utility"
 arch=('any')
 url="https://scons.org/"
