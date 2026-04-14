@@ -17,6 +17,7 @@ msys2_references=(
   "cpe: cpe:/a:util-linux_project:util-linux"
 )
 makedepends=('autotools'
+             'file'
              'gcc'
              'gettext-devel'
              'gtk-doc'
@@ -188,7 +189,7 @@ package_util-linux() {
 package_libutil-linux() {
   pkgdesc="Block device ID and Universally Unique ID libraries"
   provides=("libblkid" "libuuid" "libsmartcols")
-  depends=("gcc-libs" "libintl")
+  depends=("gcc-libs" "libintl" "file")
 
   mkdir -p ${pkgdir}/usr/bin
   cp ${srcdir}/dest/usr/bin/*.dll ${pkgdir}/usr/bin/
