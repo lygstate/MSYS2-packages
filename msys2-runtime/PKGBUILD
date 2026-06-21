@@ -34,11 +34,11 @@ currnent_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && 
 source "${currnent_script_dir}/../msys2-runtime/check-bootstrap.sh"
 # _build_as_msys_2_dll==false means build msys2-runtime as cygwin1.dll
 _build_as_msys_2_dll=true
-if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage_origin" ]]; then
+if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_rt_origin" ]]; then
   pkgrel=$pkgrel
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage_origin_hook" ]]; then
+elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_rt_hook" ]]; then
   pkgrel=5
-elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
+elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_core" ]]; then
   pkgrel=6
   _build_as_msys_2_dll=false
 elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
@@ -118,7 +118,7 @@ _patches+=(
 )
 
 # The original msys2-runtime patches that built as msys-2.0.dll
-_patches_exclude_stage_origin=(
+_patches_exclude_stage1_rt_origin=(
   0077-Revert-hook_or_detect_cygwin-now-use-msys-2.0.dll-in.patch
   0078-Revert-Add-support-for-MSYS-environment-variable-ins.patch
   0079-Support-for-both-MSYS-and-CYGWIN-environment-variabl.patch
@@ -127,7 +127,7 @@ _patches_exclude_stage_origin=(
 
 # The original msys2-runtime patches with hookapi and `Support-for-both-MSYS-and-CYGWIN-environment-variable` patches that built as msys-2.0.dll
 # All patches are included.
-_patches_exclude_stage_origin_hook=(
+_patches_exclude_stage1_rt_hook=(
 )
 
 # The new msys2-runtime that built as cygwin1.dll
@@ -261,10 +261,10 @@ prepare() {
   del_file_exists winsup/cygwin/msys2_path_conv.cc \
     winsup/cygwin/msys2_path_conv.h
 
-  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage_origin" ]]; then
-      _patches=($(exclude_list _patches _patches_exclude_stage_origin))
-  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage_origin_hook" ]]; then
-      _patches=($(exclude_list _patches _patches_exclude_stage_origin_hook))
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_rt_origin" ]]; then
+      _patches=($(exclude_list _patches _patches_exclude_stage1_rt_origin))
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_rt_hook" ]]; then
+      _patches=($(exclude_list _patches _patches_exclude_stage1_rt_hook))
   elif [[ "$_build_as_msys_2_dll" == "false" ]]; then
       _patches=($(exclude_list _patches _patches_exclude_for_cygwin_dll))
   else
@@ -313,7 +313,7 @@ build() {
     "${extra_config[@]}"
   LC_ALL=C make
 
-  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_core" ]]; then
     cp -af /usr/lib/libmsys-2.0.a /usr/lib/libmsys-2.0.a.origin
     cp -af /usr/lib/libcygwin.a /usr/lib/libcygwin.a.origin
     cp -af /usr/lib/libg.a /usr/lib/libg.a.origin
@@ -330,7 +330,7 @@ build() {
 
   LC_ALL=C make -j1 DESTDIR="${srcdir}"/dest install
 
-  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_core" ]]; then
     cp -af /usr/lib/libmsys-2.0.a.origin /usr/lib/libmsys-2.0.a
     cp -af /usr/lib/libcygwin.a.origin /usr/lib/libcygwin.a
     cp -af /usr/lib/libg.a.origin /usr/lib/libg.a

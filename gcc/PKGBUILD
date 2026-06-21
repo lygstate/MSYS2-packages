@@ -117,7 +117,7 @@ prepare() {
     0018-fix-build-opts.patch \
     0019-builtin_define-MSYS-and-update-t-cygwin-w64.patch
 
-  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
+  if [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_core" ]]; then
     apply_patch_with_msg \
       0020-gcc_libs-linkage-to-_msys_dll_entry.patch
   fi
@@ -199,8 +199,8 @@ build() {
   elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1" ]]; then
     # stage1 gcc linkage to cygwin, gcc-libs use the one comes from stage1 that linkage to cygwin
     enable_bootstrap="--disable-bootstrap"
-  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
-    # stage0 gcc linkage to msys, gcc-libs linkage to cygwin
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_core" ]]; then
+    # stage1_core gcc linkage to msys, gcc-libs linkage to cygwin
     enable_bootstrap="--disable-bootstrap"
   else
     echo "Invalid stage $MSYS_BOOTSTRAP_STAGE for enable_bootstrap"
@@ -259,8 +259,8 @@ build() {
     MSYS_IN_PKGBUILD=enabled srcdir=${srcdir} DESTDIR=${srcdir}/dest-install \
     sh ${pkg_root_dir}/build-install/gcc-prepare.sh
 
-  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage0" ]]; then
-    # stage0 gcc linkage to msys, gcc-libs linkage to cygwin
+  elif [[ "$MSYS_BOOTSTRAP_STAGE" == "stage1_core" ]]; then
+    # stage1_core gcc linkage to msys, gcc-libs linkage to cygwin
 
     # First getting gcc/gcc-libs linkage to msys
     make

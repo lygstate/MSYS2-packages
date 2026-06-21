@@ -4,7 +4,7 @@ check_bootstrap() {
     ldd_output="$(ldd /usr/bin/ldd 2>&1)"
     SUB="msys-2.0.dll"
     if [[ "$ldd_output" == *"$SUB"* ]]; then
-        MSYS_BOOTSTRAP_STAGE="stage_origin"
+        MSYS_BOOTSTRAP_STAGE="stage1_rt_origin"
     else
         MSYS_BOOTSTRAP_STAGE="stage3"
     fi
